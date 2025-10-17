@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { MapPin, Star, Clock, Search, Calendar, Zap, Navigation, MessageSquare, User } from "lucide-react";
+import { MapPin, Star, Clock, Search, Calendar, Navigation, MessageSquare, User, Coffee } from "lucide-react";
 
 // 模擬評論資料
 const MOCK_REVIEWS = {
@@ -51,7 +51,7 @@ const MOCK_REVIEWS = {
   ]
 };
 
-// 模擬店家資料（加入評論數）
+// 模擬店家資料
 const MOCK_STORES = [
   {
     id: 1,
@@ -171,7 +171,6 @@ export default function Home() {
   const [selectedStore, setSelectedStore] = useState<number | null>(null);
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
 
-  // 初始化日期和時間
   useEffect(() => {
     const now = new Date();
     const dateStr = now.toISOString().split('T')[0];
@@ -180,7 +179,6 @@ export default function Home() {
     setSelectedTime(timeStr);
   }, []);
 
-  // 獲取使用者定位
   const getUserLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -200,13 +198,11 @@ export default function Home() {
     }
   };
 
-  // 檢查店家在指定時間是否營業
   const isStoreOpenAtTime = (openingHours: string, checkTime: string) => {
     const [start, end] = openingHours.split('-').map(t => t.trim());
     return checkTime >= start && checkTime <= end;
   };
 
-  // 篩選邏輯
   const filteredStores = useMemo(() => {
     return MOCK_STORES.filter(store => {
       const matchesSearch = store.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -225,40 +221,30 @@ export default function Home() {
   }, [searchTerm, selectedDistrict, minRating, timeFilterMode, selectedTime]);
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* 動態背景層 */}
-      <div className="fixed inset-0 pointer-events-none">
-        {/* 網格背景 */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f1f1f_1px,transparent_1px),linear-gradient(to_bottom,#1f1f1f_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-20" />
+    <div className="min-h-screen bg-background relative">
+      {/* 文青風格背景裝飾 */}
+      <div className="fixed inset-0 pointer-events-none opacity-30">
+        {/* 手繪風格圓點 */}
+        <div className="absolute top-20 left-10 w-32 h-32 rounded-full bg-primary/10 blur-3xl" />
+        <div className="absolute top-40 right-20 w-40 h-40 rounded-full bg-accent/10 blur-3xl" />
+        <div className="absolute bottom-20 left-1/4 w-36 h-36 rounded-full bg-secondary/10 blur-3xl" />
         
-        {/* 漸層光暈動畫 */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/20 rounded-full blur-[120px] animate-pulse" style={{animationDelay: '1s'}} />
-        
-        {/* 流動漸層 */}
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/10 via-transparent to-accent/10 animate-[gradient-shift_15s_ease_infinite]" 
-               style={{backgroundSize: '400% 400%'}} />
-        </div>
+        {/* 插畫元素 - 蒸氣效果 */}
+        <svg className="absolute top-10 right-10 w-24 h-24 text-primary/20" viewBox="0 0 100 100">
+          <path d="M20,80 Q20,60 30,60 T40,80" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+          <path d="M50,80 Q50,55 60,55 T70,80" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+          <path d="M35,80 Q35,50 45,50 T55,80" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+        </svg>
       </div>
       
       {/* Header */}
-      <header className="relative border-b border-border/50 backdrop-blur-xl bg-card/30">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5" />
-        <div className="container relative py-8">
+      <header className="relative border-b-2 border-primary/20 bg-card/80 backdrop-blur-sm shadow-sm">
+        <div className="container py-6">
           <div className="flex items-center gap-3 mb-2">
-            <div className="relative">
-              <Zap className="w-10 h-10 text-primary animate-pulse" />
-              <div className="absolute inset-0 blur-xl bg-primary/50 animate-pulse" />
-            </div>
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-              台南牛肉湯選擇器
-            </h1>
+            <Coffee className="w-10 h-10 text-primary" />
+            <h1 className="text-4xl font-bold text-primary">台南牛肉湯選擇器</h1>
           </div>
-          <p className="text-muted-foreground text-lg flex items-center gap-2">
-            <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            AI 智能推薦 · 即時更新 · 精準定位
-          </p>
+          <p className="text-muted-foreground text-base">尋找最適合你的那碗溫暖 ☕</p>
         </div>
       </header>
 
@@ -266,7 +252,7 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* 左側篩選區 */}
           <aside className="lg:col-span-3 space-y-4">
-            <Card className="backdrop-blur-xl bg-card/40 border-border/50 shadow-[0_0_30px_rgba(255,107,0,0.1)]">
+            <Card className="border-2 border-border shadow-lg bg-card">
               <CardContent className="pt-6 space-y-6">
                 {/* 搜尋 */}
                 <div>
@@ -278,7 +264,7 @@ export default function Home() {
                     placeholder="輸入店名..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="bg-background/50 border-border/50 focus:border-primary focus:ring-primary/20"
+                    className="border-2 border-border focus:border-primary"
                   />
                 </div>
 
@@ -293,7 +279,7 @@ export default function Home() {
                       variant="outline"
                       size="sm"
                       onClick={getUserLocation}
-                      className="w-full bg-accent/10 border-accent/50 hover:bg-accent/20 hover:border-accent text-accent"
+                      className="w-full border-2 border-accent/50 hover:bg-accent/10 hover:border-accent text-accent"
                     >
                       <Navigation className="w-4 h-4 mr-2" />
                       使用我的位置
@@ -307,8 +293,8 @@ export default function Home() {
                         size="sm"
                         onClick={() => setSelectedDistrict(district)}
                         className={selectedDistrict === district 
-                          ? "bg-primary hover:bg-primary/90 shadow-[0_0_15px_rgba(255,107,0,0.5)] border-0" 
-                          : "bg-background/50 border-border/50 hover:border-primary/50 hover:bg-primary/10"}
+                          ? "bg-primary hover:bg-primary/90 border-0 shadow-md" 
+                          : "border-2 border-border hover:border-primary/50 hover:bg-primary/5"}
                       >
                         {district}
                       </Button>
@@ -316,16 +302,16 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* 評價篩選 - 改為滑桿 */}
+                {/* 評價篩選 */}
                 <div>
-                  <h2 className="text-sm font-semibold mb-3 flex items-center gap-2 text-yellow-400">
+                  <h2 className="text-sm font-semibold mb-3 flex items-center gap-2 text-yellow-600">
                     <Star className="w-4 h-4" />
                     評價篩選
                   </h2>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">最低評分</span>
-                      <span className="text-yellow-400 font-bold">{minRating[0].toFixed(1)}★</span>
+                      <span className="text-yellow-600 font-bold">{minRating[0].toFixed(1)}★</span>
                     </div>
                     <Slider
                       value={minRating}
@@ -333,7 +319,7 @@ export default function Home() {
                       max={5}
                       min={0}
                       step={0.1}
-                      className="[&_[role=slider]]:bg-primary [&_[role=slider]]:border-primary [&_[role=slider]]:shadow-[0_0_10px_rgba(255,107,0,0.5)]"
+                      className="[&_[role=slider]]:bg-primary [&_[role=slider]]:border-primary"
                     />
                     <div className="flex justify-between text-xs text-muted-foreground">
                       <span>0★</span>
@@ -355,8 +341,8 @@ export default function Home() {
                       onClick={() => setTimeFilterMode("now")}
                       className={`w-full ${
                         timeFilterMode === "now" 
-                          ? "bg-primary hover:bg-primary/90 shadow-[0_0_15px_rgba(255,107,0,0.5)] border-0" 
-                          : "bg-background/50 border-border/50 hover:border-primary/50 hover:bg-primary/10"
+                          ? "bg-primary hover:bg-primary/90 border-0 shadow-md" 
+                          : "border-2 border-border hover:border-primary/50 hover:bg-primary/5"
                       }`}
                     >
                       現在營業中
@@ -368,8 +354,8 @@ export default function Home() {
                       onClick={() => setTimeFilterMode("custom")}
                       className={`w-full ${
                         timeFilterMode === "custom" 
-                          ? "bg-primary hover:bg-primary/90 shadow-[0_0_15px_rgba(255,107,0,0.5)] border-0" 
-                          : "bg-background/50 border-border/50 hover:border-primary/50 hover:bg-primary/10"
+                          ? "bg-primary hover:bg-primary/90 border-0 shadow-md" 
+                          : "border-2 border-border hover:border-primary/50 hover:bg-primary/5"
                       }`}
                     >
                       <Calendar className="w-4 h-4 mr-2" />
@@ -377,14 +363,14 @@ export default function Home() {
                     </Button>
 
                     {timeFilterMode === "custom" && (
-                      <div className="space-y-3 pt-3 border-t border-border/50 animate-in slide-in-from-top">
+                      <div className="space-y-3 pt-3 border-t-2 border-border animate-in slide-in-from-top">
                         <div>
                           <Label className="text-xs text-muted-foreground mb-2 block">日期</Label>
                           <Input
                             type="date"
                             value={selectedDate}
                             onChange={(e) => setSelectedDate(e.target.value)}
-                            className="bg-background/50 border-border/50 focus:border-accent focus:ring-accent/20"
+                            className="border-2 border-border focus:border-accent"
                           />
                         </div>
                         <div>
@@ -393,10 +379,10 @@ export default function Home() {
                             type="time"
                             value={selectedTime}
                             onChange={(e) => setSelectedTime(e.target.value)}
-                            className="bg-background/50 border-border/50 focus:border-accent focus:ring-accent/20"
+                            className="border-2 border-border focus:border-accent"
                           />
                         </div>
-                        <p className="text-xs text-muted-foreground bg-accent/10 p-2 rounded border border-accent/20">
+                        <p className="text-xs text-muted-foreground bg-accent/10 p-2 rounded border-2 border-accent/20">
                           將顯示在 <span className="font-bold text-accent">{selectedTime}</span> 營業的店家
                         </p>
                       </div>
@@ -405,10 +391,9 @@ export default function Home() {
                 </div>
 
                 {/* 結果統計 */}
-                <div className="pt-4 border-t border-border/50">
-                  <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent animate-pulse" />
-                    <p className="text-sm text-foreground relative z-10">
+                <div className="pt-4 border-t-2 border-border">
+                  <div className="bg-primary/10 border-2 border-primary/30 rounded-lg p-3">
+                    <p className="text-sm text-foreground">
                       找到 <span className="font-bold text-primary text-xl">{filteredStores.length}</span> 家店
                     </p>
                   </div>
@@ -420,9 +405,9 @@ export default function Home() {
           {/* 中間列表區 */}
           <main className="lg:col-span-5 space-y-4">
             {filteredStores.length === 0 ? (
-              <Card className="backdrop-blur-xl bg-card/40 border-border/50">
+              <Card className="border-2 border-border shadow-lg bg-card">
                 <CardContent className="py-16 text-center">
-                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-muted/30 flex items-center justify-center">
+                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
                     <Search className="w-10 h-10 text-muted-foreground" />
                   </div>
                   <p className="text-foreground text-lg font-semibold mb-2">沒有符合條件的店家</p>
@@ -433,8 +418,8 @@ export default function Home() {
               filteredStores.map(store => (
                 <Card
                   key={store.id}
-                  className={`backdrop-blur-xl bg-card/40 border-border/50 hover:border-primary/50 transition-all cursor-pointer group ${
-                    selectedStore === store.id ? "border-primary shadow-[0_0_30px_rgba(255,107,0,0.3)] scale-[1.01]" : ""
+                  className={`border-2 border-border hover:border-primary/50 transition-all cursor-pointer group shadow-lg bg-card ${
+                    selectedStore === store.id ? "border-primary shadow-xl ring-2 ring-primary/20" : ""
                   }`}
                   onClick={() => setSelectedStore(store.id)}
                 >
@@ -446,9 +431,8 @@ export default function Home() {
                           <img
                             src={store.image}
                             alt={store.name}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent" />
                         </div>
                         <div className="flex-1 p-5 space-y-3">
                           <div className="flex items-start justify-between gap-3">
@@ -458,8 +442,8 @@ export default function Home() {
                             <Badge 
                               variant={store.isOpen ? "default" : "secondary"} 
                               className={store.isOpen 
-                                ? "bg-green-500/20 text-green-400 border-green-500/50 shadow-[0_0_10px_rgba(34,197,94,0.3)]" 
-                                : "bg-muted/20 text-muted-foreground border-border/50"}
+                                ? "bg-green-500 text-white border-0" 
+                                : "bg-muted text-muted-foreground border-2 border-border"}
                             >
                               {store.isOpen ? "營業中" : "休息中"}
                             </Badge>
@@ -467,8 +451,8 @@ export default function Home() {
                           
                           <div className="flex items-center gap-3">
                             <div className="flex items-center gap-1">
-                              <Star className="w-5 h-5 fill-yellow-400 text-yellow-400 drop-shadow-[0_0_5px_rgba(250,204,21,0.5)]" />
-                              <span className="font-bold text-xl text-yellow-400">{store.rating}</span>
+                              <Star className="w-5 h-5 fill-yellow-500 text-yellow-500" />
+                              <span className="font-bold text-xl text-yellow-600">{store.rating}</span>
                             </div>
                             <span className="text-sm text-muted-foreground">({store.reviewCount}則評論)</span>
                           </div>
@@ -480,20 +464,20 @@ export default function Home() {
 
                           <div className="flex items-center gap-2 text-muted-foreground text-sm">
                             <Clock className="w-4 h-4 flex-shrink-0 text-accent" />
-                            <span>營業時間：<span className="text-foreground font-mono">{store.openingHours}</span></span>
+                            <span>營業時間：<span className="text-foreground font-semibold">{store.openingHours}</span></span>
                           </div>
                         </div>
                       </div>
 
                       {/* 評論區 - 橫向三欄 */}
-                      <div className="border-t border-border/50 p-4 bg-muted/5">
+                      <div className="border-t-2 border-border p-4 bg-muted/30">
                         <div className="flex items-center gap-2 mb-3">
                           <MessageSquare className="w-4 h-4 text-accent" />
                           <h4 className="text-sm font-semibold text-foreground">近期評論</h4>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                           {MOCK_REVIEWS[store.id as keyof typeof MOCK_REVIEWS]?.map((review, idx) => (
-                            <div key={idx} className="bg-background/50 rounded-lg p-3 border border-border/30 hover:border-primary/30 transition-colors">
+                            <div key={idx} className="bg-card rounded-lg p-3 border-2 border-border hover:border-primary/30 transition-colors">
                               <div className="flex items-center justify-between mb-2">
                                 <div className="flex items-center gap-2">
                                   <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
@@ -503,7 +487,7 @@ export default function Home() {
                                 </div>
                                 <div className="flex items-center gap-0.5 flex-shrink-0">
                                   {Array.from({length: review.rating}).map((_, i) => (
-                                    <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                                    <Star key={i} className="w-3 h-3 fill-yellow-500 text-yellow-500" />
                                   ))}
                                 </div>
                               </div>
@@ -522,7 +506,7 @@ export default function Home() {
 
           {/* 右側地圖區 */}
           <aside className="lg:col-span-4">
-            <Card className="backdrop-blur-xl bg-card/40 border-border/50 sticky top-6 overflow-hidden shadow-[0_0_30px_rgba(0,212,255,0.1)]">
+            <Card className="border-2 border-border sticky top-6 overflow-hidden shadow-lg bg-card">
               <CardContent className="p-0">
                 {selectedStore ? (
                   <div className="h-[600px]">
@@ -537,31 +521,21 @@ export default function Home() {
                     />
                   </div>
                 ) : (
-                  <div className="relative h-[600px] bg-gradient-to-br from-muted/20 to-accent/10 flex items-center justify-center">
-                    <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f1f1f_1px,transparent_1px),linear-gradient(to_bottom,#1f1f1f_1px,transparent_1px)] bg-[size:2rem_2rem] opacity-20" />
-                    
+                  <div className="relative h-[600px] bg-gradient-to-br from-primary/5 to-accent/5 flex items-center justify-center">
                     <div className="relative z-10 text-center p-8">
-                      <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-muted/20 flex items-center justify-center border-2 border-border/50 animate-pulse">
+                      <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-muted flex items-center justify-center border-2 border-border">
                         <MapPin className="w-10 h-10 text-muted-foreground" />
                       </div>
                       <p className="text-foreground text-lg font-semibold mb-2">點選左側店家</p>
                       <p className="text-muted-foreground text-sm">在地圖上顯示位置</p>
                     </div>
                     
-                    <div className="absolute inset-0 pointer-events-none">
-                      {filteredStores.slice(0, 6).map((store, idx) => (
-                        <div
-                          key={store.id}
-                          className="absolute w-4 h-4 rounded-full bg-primary animate-pulse"
-                          style={{
-                            left: `${15 + idx * 14}%`,
-                            top: `${25 + idx * 12}%`,
-                            boxShadow: '0 0 20px rgba(255, 107, 0, 0.8)',
-                            animationDelay: `${idx * 0.2}s`
-                          }}
-                        />
-                      ))}
-                    </div>
+                    {/* 裝飾性插畫元素 */}
+                    <svg className="absolute bottom-10 right-10 w-32 h-32 text-primary/10" viewBox="0 0 100 100">
+                      <circle cx="50" cy="70" r="25" fill="currentColor"/>
+                      <path d="M30,70 Q30,50 40,50 T50,70" fill="none" stroke="currentColor" strokeWidth="3"/>
+                      <path d="M50,70 Q50,45 60,45 T70,70" fill="none" stroke="currentColor" strokeWidth="3"/>
+                    </svg>
                   </div>
                 )}
               </CardContent>
