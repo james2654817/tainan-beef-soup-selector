@@ -485,29 +485,29 @@ export default function Home() {
                         </div>
                       </div>
 
-                      {/* 評論區 */}
-                      <div className="border-t border-border/50 p-5 bg-muted/5">
+                      {/* 評論區 - 橫向三欄 */}
+                      <div className="border-t border-border/50 p-4 bg-muted/5">
                         <div className="flex items-center gap-2 mb-3">
                           <MessageSquare className="w-4 h-4 text-accent" />
                           <h4 className="text-sm font-semibold text-foreground">近期評論</h4>
                         </div>
-                        <div className="space-y-3">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                           {MOCK_REVIEWS[store.id as keyof typeof MOCK_REVIEWS]?.map((review, idx) => (
-                            <div key={idx} className="bg-background/50 rounded-lg p-3 border border-border/30">
+                            <div key={idx} className="bg-background/50 rounded-lg p-3 border border-border/30 hover:border-primary/30 transition-colors">
                               <div className="flex items-center justify-between mb-2">
                                 <div className="flex items-center gap-2">
-                                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
+                                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
                                     <User className="w-3 h-3 text-primary" />
                                   </div>
-                                  <span className="text-sm font-semibold text-foreground">{review.author}</span>
+                                  <span className="text-xs font-semibold text-foreground truncate">{review.author}</span>
                                 </div>
-                                <div className="flex items-center gap-1">
+                                <div className="flex items-center gap-0.5 flex-shrink-0">
                                   {Array.from({length: review.rating}).map((_, i) => (
                                     <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
                                   ))}
                                 </div>
                               </div>
-                              <p className="text-sm text-muted-foreground mb-1">{review.text}</p>
+                              <p className="text-xs text-muted-foreground mb-2 line-clamp-2">{review.text}</p>
                               <span className="text-xs text-muted-foreground/70">{review.date}</span>
                             </div>
                           ))}
