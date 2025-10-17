@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { MapPin, Star, Clock, Search, Calendar, Navigation, MessageSquare, User, Heart, Menu } from "lucide-react";
+import { MapPin, Star, Clock, Search, Calendar, Navigation, MessageSquare, User, Heart, Menu, Filter, X } from "lucide-react";
 
 // 模擬評論資料
 const MOCK_REVIEWS = {
@@ -257,6 +257,7 @@ export default function Home() {
   const [showDonateDialog, setShowDonateDialog] = useState(false);
   const [showMenuDialog, setShowMenuDialog] = useState(false);
   const [selectedMenuStore, setSelectedMenuStore] = useState<number | null>(null);
+  const [showMobileFilter, setShowMobileFilter] = useState(false);
 
   useEffect(() => {
     const now = new Date();
@@ -501,12 +502,42 @@ export default function Home() {
       )}
 
 
+      {/* 手機版篩選按鈕 */}
+      <button
+        onClick={() => setShowMobileFilter(true)}
+        className="lg:hidden fixed bottom-6 left-6 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-primary to-accent text-white shadow-2xl flex items-center justify-center hover:scale-110 transition-transform"
+      >
+        <Filter className="w-6 h-6" />
+      </button>
+
+      {/* 手機版篩選器遮罩 */}
+      {showMobileFilter && (
+        <div 
+          className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+          onClick={() => setShowMobileFilter(false)}
+        />
+      )}
+
       <div className="container relative py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* 左側篩選區 */}
-          <aside className="lg:col-span-3 space-y-4">
+          <aside className={`lg:col-span-3 space-y-4 ${
+            showMobileFilter 
+              ? 'fixed inset-y-0 left-0 z-50 w-80 bg-background shadow-2xl overflow-y-auto lg:relative lg:inset-auto lg:w-auto lg:shadow-none' 
+              : 'hidden lg:block'
+          }`}>
             <Card className="border-2 border-border shadow-lg bg-card">
               <CardContent className="pt-6 space-y-6">
+                {/* 手機版關閉按鈕 */}
+                <div className="lg:hidden flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-bold text-primary">篩選條件</h2>
+                  <button
+                    onClick={() => setShowMobileFilter(false)}
+                    className="w-8 h-8 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
                 {/* 搜尋 */}
                 <div>
                   <h2 className="text-sm font-semibold mb-3 flex items-center gap-2 text-primary">
@@ -650,6 +681,16 @@ export default function Home() {
                       找到 <span className="font-bold text-primary text-xl">{filteredStores.length}</span> 家店
                     </p>
                   </div>
+                </div>
+                
+                {/* 手機版確認按鈕 */}
+                <div className="lg:hidden pt-4">
+                  <Button
+                    onClick={() => setShowMobileFilter(false)}
+                    className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white border-0 shadow-lg"
+                  >
+                    查看 {filteredStores.length} 間店家
+                  </Button>
                 </div>
               </CardContent>
             </Card>
