@@ -14,6 +14,12 @@ export function MenuDialog({ storeId, storeName, open, onOpenChange }: MenuDialo
     { storeId: storeId || "" },
     { enabled: !!storeId && open }
   );
+  
+  const { data: storeData } = trpc.stores.list.useQuery();
+  const currentStore = storeData?.find((s: any) => s.id === storeId);
+  
+  // 從 store 的 photos 中取得菜單照片（前5張）
+  const menuPhotos = (currentStore as any)?.photos?.slice(0, 5) || [];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -40,6 +46,28 @@ export function MenuDialog({ storeId, storeName, open, onOpenChange }: MenuDialo
               </div>
             </div>
           </div>
+
+          {/* 菜單照片 */}
+          {menuPhotos.length > 0 && (
+            <div className="space-y-2">
+              <h3 className="font-bold text-lg flex items-center gap-2">
+                <Utensils className="w-5 h-5 text-primary" />
+                菜單照片
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {menuPhotos.map((photo: any, index: number) => (
+                  <div key={index} className="aspect-square rounded-lg overflow-hidden border-2 border-border hover:border-primary/50 transition-colors">
+                    <img 
+                      src={photo.url || photo.photoUrl} 
+                      alt={`菜單 ${index + 1}`}
+                      className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                      loading="lazy"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* 菜單內容 */}
           {isLoading ? (
