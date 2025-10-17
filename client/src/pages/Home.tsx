@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { MapPin, Star, Clock, Search, Calendar, Navigation, MessageSquare, User, Heart } from "lucide-react";
+import { MapPin, Star, Clock, Search, Calendar, Navigation, MessageSquare, User, Heart, Menu } from "lucide-react";
 
 // 模擬評論資料
 const MOCK_REVIEWS = {
@@ -49,6 +49,90 @@ const MOCK_REVIEWS = {
     { author: "學生", rating: 4, text: "價格親民，學生族群友善", date: "5天前" },
     { author: "路人甲", rating: 4, text: "普通好吃，會再回訪", date: "1週前" }
   ]
+};
+
+// 模擬菜單資料
+const MOCK_MENUS = {
+  1: {
+    recommended: [
+      { name: "招牌溫體牛肉湯", price: "100", description: "每日現宰溫體牛，肉質鮮嫩" },
+      { name: "綜合牛肉湯", price: "120", description: "牛肉、牛腱、牛筋綜合" },
+      { name: "牛肉麵", price: "110", description: "Q彈麵條搭配鮮甜湯頭" },
+      { name: "牛雜湯", price: "90", description: "牛肚、牛腸等內臟" }
+    ],
+    specialty: "凌晨現宰溫體牛，湯頭清甜不膩",
+    priceRange: "$80-$150"
+  },
+  2: {
+    recommended: [
+      { name: "特選牛肉湯", price: "150", description: "厚切牛肉，份量十足" },
+      { name: "牛腱湯", price: "130", description: "軟嫩牛腱，入口即化" },
+      { name: "牛筋湯", price: "120", description: "膠質豐富，口感Q彈" },
+      { name: "牛肉炒飯", price: "100", description: "粒粒分明，香氣十足" }
+    ],
+    specialty: "六千老字號，品質保證",
+    priceRange: "$100-$180"
+  },
+  3: {
+    recommended: [
+      { name: "牛肉湯", price: "90", description: "經典原味，湯頭清爽" },
+      { name: "牛肉麵", price: "100", description: "傳統口味" },
+      { name: "牛雜湯", price: "85", description: "內臟新鮮" },
+      { name: "滷肉飯", price: "30", description: "古早味滷肉" }
+    ],
+    specialty: "在地老店，CP值高",
+    priceRange: "$30-$120"
+  },
+  4: {
+    recommended: [
+      { name: "石精臼牛肉湯", price: "110", description: "招牌必點" },
+      { name: "牛肉炒麵", price: "100", description: "炒麵香Q" },
+      { name: "牛肉燴飯", price: "110", description: "濃郁湯汁" },
+      { name: "牛肉湯麵", price: "100", description: "麵條彈牙" }
+    ],
+    specialty: "國華街美食，觀光客最愛",
+    priceRange: "$80-$130"
+  },
+  5: {
+    recommended: [
+      { name: "牛肉湯", price: "95", description: "安平在地好味道" },
+      { name: "牛肉麵", price: "105", description: "湯頭濃郁" },
+      { name: "牛肉粥", price: "90", description: "清爽養胃" },
+      { name: "炒牛肉", price: "120", description: "快炒料理" }
+    ],
+    specialty: "安平區人氣店家",
+    priceRange: "$80-$140"
+  },
+  6: {
+    recommended: [
+      { name: "旗哥特選牛肉湯", price: "160", description: "頂級牛肉，肉質極佳" },
+      { name: "綜合牛肉湯", price: "140", description: "多種部位一次滿足" },
+      { name: "牛肉麵", price: "130", description: "湯麵俱佳" },
+      { name: "牛肉飯", price: "110", description: "牛肉蓋飯" }
+    ],
+    specialty: "台南牛肉湯天花板，品質頂尖",
+    priceRange: "$110-$180"
+  },
+  7: {
+    recommended: [
+      { name: "牛肉湯", price: "100", description: "凌晨4:30開始營業" },
+      { name: "牛肉麵", price: "110", description: "宵夜好選擇" },
+      { name: "牛肉炒飯", price: "95", description: "份量足" },
+      { name: "牛雜湯", price: "90", description: "內臟控必點" }
+    ],
+    specialty: "康樂街宵夜首選，凌晨營業",
+    priceRange: "$80-$130"
+  },
+  8: {
+    recommended: [
+      { name: "牛肉湯", price: "85", description: "北區平價選擇" },
+      { name: "牛肉麵", price: "95", description: "學生最愛" },
+      { name: "牛肉飯", price: "80", description: "經濟實惠" },
+      { name: "牛肉湯麵", price: "90", description: "份量大" }
+    ],
+    specialty: "北區親民價格，學生族群友善",
+    priceRange: "$30-$120"
+  }
 };
 
 // 模擬店家資料
@@ -171,6 +255,8 @@ export default function Home() {
   const [selectedStore, setSelectedStore] = useState<number | null>(null);
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
   const [showDonateDialog, setShowDonateDialog] = useState(false);
+  const [showMenuDialog, setShowMenuDialog] = useState(false);
+  const [selectedMenuStore, setSelectedMenuStore] = useState<number | null>(null);
 
   useEffect(() => {
     const now = new Date();
@@ -268,6 +354,87 @@ export default function Home() {
           </div>
         </div>
       </header>
+
+      {/* 菜單彈窗 */}
+      {showMenuDialog && selectedMenuStore && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowMenuDialog(false)}>
+          <div className="bg-card border-2 border-primary/30 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto p-8 relative animate-in zoom-in duration-300" onClick={(e) => e.stopPropagation()}>
+            {/* 關閉按鈕 */}
+            <button
+              onClick={() => setShowMenuDialog(false)}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center transition-colors z-10"
+            >
+              ✕
+            </button>
+            
+            {(() => {
+              const store = MOCK_STORES.find(s => s.id === selectedMenuStore);
+              const menu = MOCK_MENUS[selectedMenuStore as keyof typeof MOCK_MENUS];
+              if (!store || !menu) return null;
+              
+              return (
+                <>
+                  {/* 店家標題 */}
+                  <div className="mb-6">
+                    <div className="flex items-center gap-3 mb-2">
+                      <svg className="w-12 h-12 text-primary" viewBox="0 0 100 100" fill="none">
+                        <circle cx="50" cy="60" r="35" fill="currentColor" opacity="0.2"/>
+                        <ellipse cx="50" cy="55" rx="38" ry="12" fill="currentColor" opacity="0.3"/>
+                        <path d="M15 55 Q15 75 50 80 Q85 75 85 55" stroke="currentColor" strokeWidth="3" fill="none"/>
+                        <path d="M30 55 Q30 45 40 45 T50 55" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.6"/>
+                        <path d="M50 55 Q50 40 60 40 T70 55" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.6"/>
+                      </svg>
+                      <div>
+                        <h3 className="text-3xl font-bold text-foreground">{store.name}</h3>
+                        <p className="text-sm text-muted-foreground">{menu.specialty}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 mt-3">
+                      <div className="flex items-center gap-1">
+                        <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
+                        <span className="font-bold text-yellow-600">{store.rating}</span>
+                      </div>
+                      <span className="text-muted-foreground text-sm">{menu.priceRange}</span>
+                    </div>
+                  </div>
+                  
+                  {/* 推薦菜色 */}
+                  <div>
+                    <h4 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+                      <Menu className="w-5 h-5 text-primary" />
+                      推薦菜色
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {menu.recommended.map((item, idx) => (
+                        <div key={idx} className="bg-gradient-to-br from-primary/5 to-accent/5 border-2 border-border hover:border-primary/50 rounded-xl p-4 transition-all hover:shadow-md">
+                          <div className="flex items-start justify-between mb-2">
+                            <h5 className="font-bold text-foreground text-base">{item.name}</h5>
+                            <span className="text-primary font-bold text-lg">${item.price}</span>
+                          </div>
+                          <p className="text-sm text-muted-foreground">{item.description}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* 提示訊息 */}
+                  <div className="mt-6 bg-accent/10 border-2 border-accent/20 rounded-lg p-4">
+                    <p className="text-sm text-muted-foreground text-center">
+                      📍 {store.address}
+                    </p>
+                    <p className="text-sm text-muted-foreground text-center mt-1">
+                      ⏰ 營業時間：{store.openingHours}
+                    </p>
+                    <p className="text-xs text-muted-foreground/70 text-center mt-2">
+                      * 菜單價格僅供參考，實際價格以店家為準
+                    </p>
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        </div>
+      )}
 
       {/* 贊助彈窗 */}
       {showDonateDialog && (
@@ -525,14 +692,29 @@ export default function Home() {
                             <h3 className="text-2xl font-bold text-foreground group-hover:text-primary transition-colors">
                               {store.name}
                             </h3>
-                            <Badge 
-                              variant={store.isOpen ? "default" : "secondary"} 
-                              className={store.isOpen 
-                                ? "bg-green-500 text-white border-0" 
-                                : "bg-muted text-muted-foreground border-2 border-border"}
-                            >
-                              {store.isOpen ? "營業中" : "休息中"}
-                            </Badge>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedMenuStore(store.id);
+                                  setShowMenuDialog(true);
+                                }}
+                                className="border-2 border-primary/50 hover:bg-primary/10 hover:border-primary text-primary font-semibold"
+                              >
+                                <Menu className="w-4 h-4 mr-1" />
+                                查看菜單
+                              </Button>
+                              <Badge 
+                                variant={store.isOpen ? "default" : "secondary"} 
+                                className={store.isOpen 
+                                  ? "bg-green-500 text-white border-0" 
+                                  : "bg-muted text-muted-foreground border-2 border-border"}
+                              >
+                                {store.isOpen ? "營業中" : "休息中"}
+                              </Badge>
+                            </div>
                           </div>
                           
                           <div className="flex items-center gap-3">
