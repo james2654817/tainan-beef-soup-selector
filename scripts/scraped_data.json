@@ -1,0 +1,53 @@
+[
+  {
+    "name": "六千牛肉湯",
+    "search_query": "六千牛肉湯 台南",
+    "scraped_at": "2025-10-17T09:45:01.931286",
+    "rating": null,
+    "review_count": null,
+    "address": null,
+    "phone": null,
+    "website": null,
+    "hours": {},
+    "reviews": [],
+    "photos": [],
+    "latitude": null,
+    "longitude": null,
+    "price_range": null,
+    "categories": []
+  },
+  {
+    "name": "文章牛肉湯",
+    "search_query": "文章牛肉湯 台南",
+    "scraped_at": "2025-10-17T09:45:18.550027",
+    "rating": null,
+    "review_count": null,
+    "address": null,
+    "phone": null,
+    "website": null,
+    "hours": {},
+    "reviews": [],
+    "photos": [],
+    "latitude": null,
+    "longitude": null,
+    "price_range": null,
+    "categories": []
+  },
+  {
+    "name": "阿鳳牛肉湯",
+    "search_query": "阿鳳牛肉湯 台南",
+    "scraped_at": "2025-10-17T09:45:35.573716",
+    "rating": null,
+    "review_count": null,
+    "address": null,
+    "phone": null,
+    "website": null,
+    "hours": {},
+    "reviews": [],
+    "photos": [],
+    "latitude": null,
+    "longitude": null,
+    "price_range": null,
+    "categories": []
+  }
+]
