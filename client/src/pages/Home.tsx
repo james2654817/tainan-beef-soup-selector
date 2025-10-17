@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { MapPin, Star, Clock, Search, Calendar, Navigation, MessageSquare, User, Coffee } from "lucide-react";
+import { MapPin, Star, Clock, Search, Calendar, Navigation, MessageSquare, User, Heart } from "lucide-react";
 
 // 模擬評論資料
 const MOCK_REVIEWS = {
@@ -170,6 +170,7 @@ export default function Home() {
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedStore, setSelectedStore] = useState<number | null>(null);
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
+  const [showDonateDialog, setShowDonateDialog] = useState(false);
 
   useEffect(() => {
     const now = new Date();
@@ -240,13 +241,98 @@ export default function Home() {
       {/* Header */}
       <header className="relative border-b-2 border-primary/20 bg-card/80 backdrop-blur-sm shadow-sm">
         <div className="container py-6">
-          <div className="flex items-center gap-3 mb-2">
-            <Coffee className="w-10 h-10 text-primary" />
-            <h1 className="text-4xl font-bold text-primary">台南牛肉湯選擇器</h1>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                {/* 牛肉湯碗圖示 */}
+                <svg className="w-10 h-10 text-primary" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="50" cy="60" r="35" fill="currentColor" opacity="0.2"/>
+                  <ellipse cx="50" cy="55" rx="38" ry="12" fill="currentColor" opacity="0.3"/>
+                  <path d="M15 55 Q15 75 50 80 Q85 75 85 55" stroke="currentColor" strokeWidth="3" fill="none"/>
+                  <path d="M30 55 Q30 45 40 45 T50 55" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.6"/>
+                  <path d="M50 55 Q50 40 60 40 T70 55" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.6"/>
+                </svg>
+                <h1 className="text-4xl font-bold text-primary">台南牛肉湯選擇器</h1>
+              </div>
+              <p className="text-muted-foreground text-base">尋找最適合你的那碗溫暖 🍜</p>
+            </div>
+            
+            {/* 贊助按鈕 */}
+            <Button
+              onClick={() => setShowDonateDialog(true)}
+              className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 px-6 py-6 text-base font-semibold"
+            >
+              <Heart className="w-5 h-5 mr-2 animate-pulse" />
+              🧋 請我喝杯珍奶
+            </Button>
           </div>
-          <p className="text-muted-foreground text-base">尋找最適合你的那碗溫暖 ☕</p>
         </div>
       </header>
+
+      {/* 贊助彈窗 */}
+      {showDonateDialog && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowDonateDialog(false)}>
+          <div className="bg-card border-2 border-primary/30 rounded-2xl shadow-2xl max-w-md w-full p-8 relative animate-in zoom-in duration-300" onClick={(e) => e.stopPropagation()}>
+            {/* 關閉按鈕 */}
+            <button
+              onClick={() => setShowDonateDialog(false)}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center transition-colors"
+            >
+              ✕
+            </button>
+            
+            {/* 裝飾性插畫 */}
+            <div className="flex justify-center mb-6">
+              <div className="relative">
+                <svg className="w-20 h-20 text-primary" viewBox="0 0 100 100" fill="none">
+                  <circle cx="50" cy="60" r="35" fill="currentColor" opacity="0.2"/>
+                  <ellipse cx="50" cy="55" rx="38" ry="12" fill="currentColor" opacity="0.3"/>
+                  <path d="M15 55 Q15 75 50 80 Q85 75 85 55" stroke="currentColor" strokeWidth="3" fill="none"/>
+                  <path d="M30 55 Q30 45 40 45 T50 55" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.6"/>
+                  <path d="M50 55 Q50 40 60 40 T70 55" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.6"/>
+                </svg>
+                <Heart className="w-6 h-6 text-red-500 absolute -top-2 -right-2 animate-pulse" fill="currentColor" />
+              </div>
+            </div>
+            
+            {/* 標題 */}
+            <h3 className="text-2xl font-bold text-center text-foreground mb-2">
+              喜歡這個選擇器嗎？
+            </h3>
+            <p className="text-center text-muted-foreground mb-6">
+              請我喝杯珍奶，讓我繼續維護更新 🐮
+            </p>
+            
+            {/* BobaMe 按鈕 */}
+            <div className="flex justify-center mb-6">
+              <a
+                href="https://hiyewei.bobaboba.me"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center w-full h-12 px-6 bg-white hover:bg-gray-50 text-[#C07C62] border-2 border-[#C4C4C4] hover:border-[#C07C62] rounded-xl transition-all duration-300 shadow-md hover:shadow-lg font-semibold"
+              >
+                <img
+                  src="https://s3.ap-southeast-1.amazonaws.com/media.anyonelab.com/images/boba/boba-embed-icon.png"
+                  alt="boba-icon"
+                  className="h-6 mr-3"
+                />
+                請我喝珍奶！
+              </a>
+            </div>
+            
+            {/* 感謝文字 */}
+            <div className="bg-primary/5 border-2 border-primary/20 rounded-lg p-4 text-center">
+              <p className="text-sm text-muted-foreground">
+                您的每一份支持都是我持續優化的動力！
+              </p>
+              <p className="text-xs text-muted-foreground/70 mt-2">
+                💝 感謝您的慷慨贊助
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
 
       <div className="container relative py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
