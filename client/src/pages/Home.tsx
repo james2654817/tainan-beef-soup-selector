@@ -1,255 +1,22 @@
 import { useState, useMemo, useEffect } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MapPin, Star, Clock, Search, Calendar, Navigation, MessageSquare, User, Heart, Menu, Filter, X } from "lucide-react";
-
-// 模擬評論資料
-const MOCK_REVIEWS = {
-  1: [
-    { author: "美食獵人", rating: 5, text: "牛肉超級新鮮，湯頭清甜不膩，早上來一碗真的很幸福！", date: "2天前" },
-    { author: "台南在地人", rating: 4, text: "老字號了，品質穩定，就是人有點多要排隊", date: "5天前" },
-    { author: "觀光客小王", rating: 5, text: "第一次吃台南牛肉湯就選這家，沒有失望！", date: "1週前" }
-  ],
-  2: [
-    { author: "吃貨日記", rating: 5, text: "六千真的名不虛傳，牛肉切得很厚實，湯頭濃郁", date: "1天前" },
-    { author: "美食部落客", rating: 5, text: "凌晨來吃宵夜的好選擇，停車也方便", date: "3天前" },
-    { author: "在地老饕", rating: 4, text: "價格稍高但物有所值，推薦綜合湯", date: "1週前" }
-  ],
-  3: [
-    { author: "路過遊客", rating: 4, text: "湯頭不錯，但肉質普通，整體還可以", date: "2天前" },
-    { author: "小吃愛好者", rating: 4, text: "CP值高，份量足夠，適合當早餐", date: "4天前" },
-    { author: "美食探險家", rating: 5, text: "意外的好吃！下次還會再來", date: "1週前" }
-  ],
-  4: [
-    { author: "台南通", rating: 4, text: "在地人推薦的店，不會踩雷", date: "1天前" },
-    { author: "觀光客", rating: 4, text: "位置有點難找，但值得一試", date: "3天前" },
-    { author: "牛肉湯控", rating: 5, text: "湯頭清爽，牛肉鮮嫩，讚！", date: "5天前" }
-  ],
-  5: [
-    { author: "早餐達人", rating: 4, text: "安平區的好選擇，觀光完可以來吃", date: "2天前" },
-    { author: "在地居民", rating: 4, text: "住附近常來，品質穩定", date: "1週前" },
-    { author: "美食評論家", rating: 4, text: "中規中矩，不會讓人失望", date: "2週前" }
-  ],
-  6: [
-    { author: "牛肉湯狂熱者", rating: 5, text: "我心中的第一名！每次來台南必吃", date: "1天前" },
-    { author: "食尚玩家", rating: 5, text: "超級推薦！湯頭、肉質都是頂級", date: "3天前" },
-    { author: "老饕", rating: 5, text: "旗哥真的強，難怪評價這麼高", date: "1週前" }
-  ],
-  7: [
-    { author: "夜貓族", rating: 5, text: "凌晨4點半就開了，宵夜首選", date: "1天前" },
-    { author: "上班族", rating: 4, text: "上班前來一碗，整天都有精神", date: "4天前" },
-    { author: "美食家", rating: 5, text: "康樂街這家真的很讚", date: "1週前" }
-  ],
-  8: [
-    { author: "北區居民", rating: 4, text: "住北區的好選擇，不用跑市區", date: "2天前" },
-    { author: "學生", rating: 4, text: "價格親民，學生族群友善", date: "5天前" },
-    { author: "路人甲", rating: 4, text: "普通好吃，會再回訪", date: "1週前" }
-  ]
-};
-
-// 模擬菜單資料
-const MOCK_MENUS = {
-  1: {
-    recommended: [
-      { name: "招牌溫體牛肉湯", price: "100", description: "每日現宰溫體牛，肉質鮮嫩" },
-      { name: "綜合牛肉湯", price: "120", description: "牛肉、牛腱、牛筋綜合" },
-      { name: "牛肉麵", price: "110", description: "Q彈麵條搭配鮮甜湯頭" },
-      { name: "牛雜湯", price: "90", description: "牛肚、牛腸等內臟" }
-    ],
-    specialty: "凌晨現宰溫體牛，湯頭清甜不膩",
-    priceRange: "$80-$150"
-  },
-  2: {
-    recommended: [
-      { name: "特選牛肉湯", price: "150", description: "厚切牛肉，份量十足" },
-      { name: "牛腱湯", price: "130", description: "軟嫩牛腱，入口即化" },
-      { name: "牛筋湯", price: "120", description: "膠質豐富，口感Q彈" },
-      { name: "牛肉炒飯", price: "100", description: "粒粒分明，香氣十足" }
-    ],
-    specialty: "六千老字號，品質保證",
-    priceRange: "$100-$180"
-  },
-  3: {
-    recommended: [
-      { name: "牛肉湯", price: "90", description: "經典原味，湯頭清爽" },
-      { name: "牛肉麵", price: "100", description: "傳統口味" },
-      { name: "牛雜湯", price: "85", description: "內臟新鮮" },
-      { name: "滷肉飯", price: "30", description: "古早味滷肉" }
-    ],
-    specialty: "在地老店，CP值高",
-    priceRange: "$30-$120"
-  },
-  4: {
-    recommended: [
-      { name: "石精臼牛肉湯", price: "110", description: "招牌必點" },
-      { name: "牛肉炒麵", price: "100", description: "炒麵香Q" },
-      { name: "牛肉燴飯", price: "110", description: "濃郁湯汁" },
-      { name: "牛肉湯麵", price: "100", description: "麵條彈牙" }
-    ],
-    specialty: "國華街美食，觀光客最愛",
-    priceRange: "$80-$130"
-  },
-  5: {
-    recommended: [
-      { name: "牛肉湯", price: "95", description: "安平在地好味道" },
-      { name: "牛肉麵", price: "105", description: "湯頭濃郁" },
-      { name: "牛肉粥", price: "90", description: "清爽養胃" },
-      { name: "炒牛肉", price: "120", description: "快炒料理" }
-    ],
-    specialty: "安平區人氣店家",
-    priceRange: "$80-$140"
-  },
-  6: {
-    recommended: [
-      { name: "旗哥特選牛肉湯", price: "160", description: "頂級牛肉，肉質極佳" },
-      { name: "綜合牛肉湯", price: "140", description: "多種部位一次滿足" },
-      { name: "牛肉麵", price: "130", description: "湯麵俱佳" },
-      { name: "牛肉飯", price: "110", description: "牛肉蓋飯" }
-    ],
-    specialty: "台南牛肉湯天花板，品質頂尖",
-    priceRange: "$110-$180"
-  },
-  7: {
-    recommended: [
-      { name: "牛肉湯", price: "100", description: "凌晨4:30開始營業" },
-      { name: "牛肉麵", price: "110", description: "宵夜好選擇" },
-      { name: "牛肉炒飯", price: "95", description: "份量足" },
-      { name: "牛雜湯", price: "90", description: "內臟控必點" }
-    ],
-    specialty: "康樂街宵夜首選，凌晨營業",
-    priceRange: "$80-$130"
-  },
-  8: {
-    recommended: [
-      { name: "牛肉湯", price: "85", description: "北區平價選擇" },
-      { name: "牛肉麵", price: "95", description: "學生最愛" },
-      { name: "牛肉飯", price: "80", description: "經濟實惠" },
-      { name: "牛肉湯麵", price: "90", description: "份量大" }
-    ],
-    specialty: "北區親民價格，學生族群友善",
-    priceRange: "$30-$120"
-  }
-};
-
-// 模擬店家資料
-const MOCK_STORES = [
-  {
-    id: 1,
-    name: "文章牛肉湯",
-    district: "安平區",
-    address: "台南市安平區安平路590號",
-    rating: 4.5,
-    reviewCount: 1250,
-    openingHours: "05:00-13:30",
-    isOpen: true,
-    image: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&h=300&fit=crop",
-    lat: 23.001,
-    lng: 120.165
-  },
-  {
-    id: 2,
-    name: "六千牛肉湯",
-    district: "中西區",
-    address: "台南市中西區海安路一段63號",
-    rating: 4.6,
-    reviewCount: 2100,
-    openingHours: "05:30-12:30",
-    isOpen: true,
-    image: "https://images.unsplash.com/photo-1603073163308-9c4f5d3f2a3f?w=400&h=300&fit=crop",
-    lat: 22.997,
-    lng: 120.197
-  },
-  {
-    id: 3,
-    name: "阿村牛肉湯",
-    district: "中西區",
-    address: "台南市中西區保安路41號",
-    rating: 4.4,
-    reviewCount: 890,
-    openingHours: "06:00-14:00",
-    isOpen: false,
-    image: "https://images.unsplash.com/photo-1582169296194-e4d644c48063?w=400&h=300&fit=crop",
-    lat: 22.992,
-    lng: 120.200
-  },
-  {
-    id: 4,
-    name: "石精臼牛肉湯",
-    district: "中西區",
-    address: "台南市中西區國華街三段16巷2號",
-    rating: 4.3,
-    reviewCount: 756,
-    openingHours: "05:00-12:00",
-    isOpen: true,
-    image: "https://images.unsplash.com/photo-1588347818036-8e6c7c1e8e0f?w=400&h=300&fit=crop",
-    lat: 22.995,
-    lng: 120.198
-  },
-  {
-    id: 5,
-    name: "阿財牛肉湯",
-    district: "安平區",
-    address: "台南市安平區安平路422號",
-    rating: 4.2,
-    reviewCount: 620,
-    openingHours: "06:30-13:00",
-    isOpen: true,
-    image: "https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=400&h=300&fit=crop",
-    lat: 23.003,
-    lng: 120.163
-  },
-  {
-    id: 6,
-    name: "旗哥牛肉湯",
-    district: "東區",
-    address: "台南市東區崇學路55號",
-    rating: 4.7,
-    reviewCount: 1580,
-    openingHours: "05:00-11:30",
-    isOpen: false,
-    image: "https://images.unsplash.com/photo-1595295333158-4742f28fbd85?w=400&h=300&fit=crop",
-    lat: 22.985,
-    lng: 120.225
-  },
-  {
-    id: 7,
-    name: "康樂街牛肉湯",
-    district: "中西區",
-    address: "台南市中西區康樂街410號",
-    rating: 4.5,
-    reviewCount: 1120,
-    openingHours: "04:30-12:00",
-    isOpen: true,
-    image: "https://images.unsplash.com/photo-1600555379765-f82335a05f0e?w=400&h=300&fit=crop",
-    lat: 22.990,
-    lng: 120.195
-  },
-  {
-    id: 8,
-    name: "助仔牛肉湯",
-    district: "北區",
-    address: "台南市北區開元路247號",
-    rating: 4.1,
-    reviewCount: 450,
-    openingHours: "06:00-13:30",
-    isOpen: true,
-    image: "https://images.unsplash.com/photo-1603073163308-9c4f5d3f2a3f?w=400&h=300&fit=crop",
-    lat: 23.010,
-    lng: 120.210
-  }
-];
 
 const DISTRICTS = ["全部區域", "中西區", "東區", "南區", "北區", "安平區", "安南區", "永康區", "歸仁區"];
 
 export default function Home() {
-  // The userAuth hooks provides authentication state
-  // To implement login/logout functionality, simply call logout() or redirect to getLoginUrl()
-  let { user, loading, error, isAuthenticated, logout } = useAuth();
+  const { user } = useAuth();
+
+  // 從後端取得所有店家資料
+  const { data: storesData, isLoading } = trpc.stores.list.useQuery();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("全部區域");
@@ -257,12 +24,18 @@ export default function Home() {
   const [timeFilterMode, setTimeFilterMode] = useState<"now" | "custom">("now");
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
-  const [selectedStore, setSelectedStore] = useState<number | null>(null);
+  const [selectedStoreId, setSelectedStoreId] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
   const [showDonateDialog, setShowDonateDialog] = useState(false);
   const [showMenuDialog, setShowMenuDialog] = useState(false);
-  const [selectedMenuStore, setSelectedMenuStore] = useState<number | null>(null);
+  const [selectedMenuStoreId, setSelectedMenuStoreId] = useState<string | null>(null);
   const [showMobileFilter, setShowMobileFilter] = useState(false);
+
+  // 取得選中店家的評論
+  const { data: selectedStoreReviews } = trpc.reviews.byStoreId.useQuery(
+    { storeId: selectedStoreId!, limit: 3 },
+    { enabled: !!selectedStoreId }
+  );
 
   useEffect(() => {
     const now = new Date();
@@ -283,6 +56,7 @@ export default function Home() {
           setSelectedDistrict("附近");
         },
         (error) => {
+          console.error("定位失敗:", error);
           alert("無法取得您的位置，請確認已開啟定位權限");
         }
       );
@@ -291,571 +65,563 @@ export default function Home() {
     }
   };
 
-  const isStoreOpenAtTime = (openingHours: string, checkTime: string) => {
-    const [start, end] = openingHours.split('-').map(t => t.trim());
-    return checkTime >= start && checkTime <= end;
+  // 檢查店家是否在指定時間營業
+  const isStoreOpenAtTime = (openingHours: string[] | null, dateStr: string, timeStr: string) => {
+    if (!openingHours || openingHours.length === 0) return true;
+
+    const date = new Date(dateStr);
+    const dayOfWeek = date.getDay(); // 0=Sunday, 1=Monday, ...
+    
+    const daySchedule = openingHours[dayOfWeek === 0 ? 6 : dayOfWeek - 1];
+    
+    if (!daySchedule || daySchedule.includes("休息") || daySchedule.includes("Closed")) {
+      return false;
+    }
+
+    const timeMatch = daySchedule.match(/(\d{2}):(\d{2})\s*[–-]\s*(\d{2}):(\d{2})/);
+    if (!timeMatch) return true;
+
+    const [_, openHour, openMin, closeHour, closeMin] = timeMatch;
+    const openTime = parseInt(openHour) * 60 + parseInt(openMin);
+    const closeTime = parseInt(closeHour) * 60 + parseInt(closeMin);
+    const currentTime = parseInt(timeStr.split(':')[0]) * 60 + parseInt(timeStr.split(':')[1]);
+
+    return currentTime >= openTime && currentTime <= closeTime;
   };
 
+  // 篩選店家
   const filteredStores = useMemo(() => {
-    return MOCK_STORES.filter(store => {
-      const matchesSearch = store.name.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesDistrict = selectedDistrict === "全部區域" || selectedDistrict === "附近" || store.district === selectedDistrict;
-      const matchesRating = store.rating >= minRating[0];
-      
-      let matchesTime = true;
-      if (timeFilterMode === "now") {
-        matchesTime = store.isOpen;
-      } else if (timeFilterMode === "custom" && selectedTime) {
-        matchesTime = isStoreOpenAtTime(store.openingHours, selectedTime);
+    if (!storesData) return [];
+
+    return storesData.filter(store => {
+      // 搜尋篩選
+      if (searchTerm && !store.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+        return false;
       }
-      
-      return matchesSearch && matchesDistrict && matchesRating && matchesTime;
+
+      // 區域篩選
+      if (selectedDistrict !== "全部區域" && selectedDistrict !== "附近") {
+        if (store.district !== selectedDistrict) return false;
+      }
+
+      // 評分篩選
+      const rating = store.rating || 0;
+      if (rating < minRating[0]) return false;
+
+      // 營業時間篩選
+      if (timeFilterMode === "custom" && selectedDate && selectedTime) {
+        if (!isStoreOpenAtTime(store.openingHours, selectedDate, selectedTime)) {
+          return false;
+        }
+      }
+
+      return true;
     });
-  }, [searchTerm, selectedDistrict, minRating, timeFilterMode, selectedTime]);
+  }, [storesData, searchTerm, selectedDistrict, minRating, timeFilterMode, selectedDate, selectedTime]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">載入中...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-background relative">
-      {/* 文青風格背景裝飾 */}
-      <div className="fixed inset-0 pointer-events-none opacity-30">
-        {/* 手繪風格圓點 */}
-        <div className="absolute top-20 left-10 w-32 h-32 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute top-40 right-20 w-40 h-40 rounded-full bg-accent/10 blur-3xl" />
-        <div className="absolute bottom-20 left-1/4 w-36 h-36 rounded-full bg-secondary/10 blur-3xl" />
-        
-        {/* 插畫元素 - 蒸氣效果 */}
-        <svg className="absolute top-10 right-10 w-24 h-24 text-primary/20" viewBox="0 0 100 100">
-          <path d="M20,80 Q20,60 30,60 T40,80" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
-          <path d="M50,80 Q50,55 60,55 T70,80" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
-          <path d="M35,80 Q35,50 45,50 T55,80" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
-        </svg>
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
+      {/* 動態背景裝飾 */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-20 left-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-80 h-80 bg-accent/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-primary/3 rounded-full blur-3xl animate-pulse delay-500"></div>
       </div>
-      
+
       {/* Header */}
       <header className="relative border-b-2 border-primary/20 bg-card/80 backdrop-blur-sm shadow-sm">
-        <div className="container py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                {/* 牛肉湯碗圖示 */}
-                <svg className="w-10 h-10 text-primary" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="50" cy="60" r="35" fill="currentColor" opacity="0.2"/>
-                  <ellipse cx="50" cy="55" rx="38" ry="12" fill="currentColor" opacity="0.3"/>
-                  <path d="M15 55 Q15 75 50 80 Q85 75 85 55" stroke="currentColor" strokeWidth="3" fill="none"/>
-                  <path d="M30 55 Q30 45 40 45 T50 55" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.6"/>
-                  <path d="M50 55 Q50 40 60 40 T70 55" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.6"/>
-                </svg>
-                <h1 className="text-4xl font-bold text-primary">台南牛肉湯選擇器</h1>
-              </div>
-              <p className="text-muted-foreground text-base">尋找最適合你的那碗溫暖 🍜</p>
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
+              <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-white">
+                <path d="M12 2C8 2 5 5 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-4-3-7-7-7z" fill="currentColor" opacity="0.3"/>
+                <circle cx="12" cy="9" r="2.5" fill="currentColor"/>
+                <path d="M8 14c0 2 1.5 4 4 5 2.5-1 4-3 4-5" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+              </svg>
             </div>
-            
-            {/* 贊助按鈕 */}
-            <Button
-              onClick={() => setShowDonateDialog(true)}
-              className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 px-6 py-6 text-base font-semibold"
-            >
-              <Heart className="w-5 h-5 mr-2 animate-pulse" />
-              🧋 請我喝杯珍奶
-            </Button>
+            <div>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse">
+                台南牛肉湯選擇器
+              </h1>
+              <p className="text-sm text-muted-foreground flex items-center gap-1">
+                尋找最適合你的那碗溫暖 🍜
+              </p>
+            </div>
           </div>
+          <Button
+            onClick={() => setShowDonateDialog(true)}
+            className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white shadow-lg"
+          >
+            <Heart className="w-4 h-4 mr-2 animate-pulse" />
+            請我喝杯珍奶
+          </Button>
         </div>
       </header>
 
-      {/* 菜單彈窗 */}
-      {showMenuDialog && selectedMenuStore && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowMenuDialog(false)}>
-          <div className="bg-card border-2 border-primary/30 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto p-8 relative animate-in zoom-in duration-300" onClick={(e) => e.stopPropagation()}>
-            {/* 關閉按鈕 */}
-            <button
-              onClick={() => setShowMenuDialog(false)}
-              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center transition-colors z-10"
-            >
-              ✕
-            </button>
-            
-            {(() => {
-              const store = MOCK_STORES.find(s => s.id === selectedMenuStore);
-              const menu = MOCK_MENUS[selectedMenuStore as keyof typeof MOCK_MENUS];
-              if (!store || !menu) return null;
-              
-              return (
-                <>
-                  {/* 店家標題 */}
-                  <div className="mb-6">
-                    <div className="flex items-center gap-3 mb-2">
-                      <svg className="w-12 h-12 text-primary" viewBox="0 0 100 100" fill="none">
-                        <circle cx="50" cy="60" r="35" fill="currentColor" opacity="0.2"/>
-                        <ellipse cx="50" cy="55" rx="38" ry="12" fill="currentColor" opacity="0.3"/>
-                        <path d="M15 55 Q15 75 50 80 Q85 75 85 55" stroke="currentColor" strokeWidth="3" fill="none"/>
-                        <path d="M30 55 Q30 45 40 45 T50 55" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.6"/>
-                        <path d="M50 55 Q50 40 60 40 T70 55" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.6"/>
-                      </svg>
-                      <div>
-                        <h3 className="text-3xl font-bold text-foreground">{store.name}</h3>
-                        <p className="text-sm text-muted-foreground">{menu.specialty}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4 mt-3">
-                      <div className="flex items-center gap-1">
-                        <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
-                        <span className="font-bold text-yellow-600">{store.rating}</span>
-                      </div>
-                      <span className="text-muted-foreground text-sm">{menu.priceRange}</span>
-                    </div>
-                  </div>
-                  
-                  {/* 推薦菜色 */}
-                  <div>
-                    <h4 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                      <Menu className="w-5 h-5 text-primary" />
-                      推薦菜色
-                    </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {menu.recommended.map((item, idx) => (
-                        <div key={idx} className="bg-gradient-to-br from-primary/5 to-accent/5 border-2 border-border hover:border-primary/50 rounded-xl p-4 transition-all hover:shadow-md">
-                          <div className="flex items-start justify-between mb-2">
-                            <h5 className="font-bold text-foreground text-base">{item.name}</h5>
-                            <span className="text-primary font-bold text-lg">${item.price}</span>
-                          </div>
-                          <p className="text-sm text-muted-foreground">{item.description}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  {/* 提示訊息 */}
-                  <div className="mt-6 bg-accent/10 border-2 border-accent/20 rounded-lg p-4">
-                    <p className="text-sm text-muted-foreground text-center">
-                      📍 {store.address}
-                    </p>
-                    <p className="text-sm text-muted-foreground text-center mt-1">
-                      ⏰ 營業時間：{store.openingHours}
-                    </p>
-                    <p className="text-xs text-muted-foreground/70 text-center mt-2">
-                      * 菜單價格僅供參考，實際價格以店家為準
-                    </p>
-                  </div>
-                </>
-              );
-            })()}
-          </div>
-        </div>
-      )}
-
-      {/* 贊助彈窗 */}
-      {showDonateDialog && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowDonateDialog(false)}>
-          <div className="bg-card border-2 border-primary/30 rounded-2xl shadow-2xl max-w-md w-full p-8 relative animate-in zoom-in duration-300" onClick={(e) => e.stopPropagation()}>
-            {/* 關閉按鈕 */}
-            <button
-              onClick={() => setShowDonateDialog(false)}
-              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center transition-colors"
-            >
-              ✕
-            </button>
-            
-            {/* 裝飾性插畫 */}
-            <div className="flex justify-center mb-6">
-              <div className="relative">
-                <svg className="w-20 h-20 text-primary" viewBox="0 0 100 100" fill="none">
-                  <circle cx="50" cy="60" r="35" fill="currentColor" opacity="0.2"/>
-                  <ellipse cx="50" cy="55" rx="38" ry="12" fill="currentColor" opacity="0.3"/>
-                  <path d="M15 55 Q15 75 50 80 Q85 75 85 55" stroke="currentColor" strokeWidth="3" fill="none"/>
-                  <path d="M30 55 Q30 45 40 45 T50 55" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.6"/>
-                  <path d="M50 55 Q50 40 60 40 T70 55" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.6"/>
-                </svg>
-                <Heart className="w-6 h-6 text-red-500 absolute -top-2 -right-2 animate-pulse" fill="currentColor" />
-              </div>
-            </div>
-            
-            {/* 標題 */}
-            <h3 className="text-2xl font-bold text-center text-foreground mb-2">
-              喜歡這個選擇器嗎？
-            </h3>
-            <p className="text-center text-muted-foreground mb-6">
-              請我喝杯珍奶，讓我繼續維護更新 🐮
-            </p>
-            
-            {/* BobaMe 按鈕 */}
-            <div className="flex justify-center mb-6">
-              <a
-                href="https://hiyewei.bobaboba.me"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center w-full h-12 px-6 bg-white hover:bg-gray-50 text-[#C07C62] border-2 border-[#C4C4C4] hover:border-[#C07C62] rounded-xl transition-all duration-300 shadow-md hover:shadow-lg font-semibold"
-              >
-                <img
-                  src="https://s3.ap-southeast-1.amazonaws.com/media.anyonelab.com/images/boba/boba-embed-icon.png"
-                  alt="boba-icon"
-                  className="h-6 mr-3"
-                />
-                請我喝珍奶！
-              </a>
-            </div>
-            
-            {/* 感謝文字 */}
-            <div className="bg-primary/5 border-2 border-primary/20 rounded-lg p-4 text-center">
-              <p className="text-sm text-muted-foreground">
-                您的每一份支持都是我持續優化的動力！
-              </p>
-              <p className="text-xs text-muted-foreground/70 mt-2">
-                💝 感謝您的慷慨贊助
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-
       {/* 手機版篩選按鈕 */}
-      <button
-        onClick={() => setShowMobileFilter(true)}
-        className="lg:hidden fixed bottom-6 left-6 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-primary to-accent text-white shadow-2xl flex items-center justify-center hover:scale-110 transition-transform"
-      >
-        <Filter className="w-6 h-6" />
-      </button>
+      <div className="lg:hidden fixed bottom-6 left-6 z-50">
+        <Button
+          onClick={() => setShowMobileFilter(true)}
+          className="rounded-full w-14 h-14 bg-gradient-to-br from-primary to-accent shadow-2xl hover:scale-110 transition-transform"
+        >
+          <Filter className="w-6 h-6 text-white" />
+        </Button>
+      </div>
 
-      {/* 手機版篩選器遮罩 */}
-      {showMobileFilter && (
-        <div 
-          className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
-          onClick={() => setShowMobileFilter(false)}
-        />
-      )}
-
-      <div className="container relative py-8">
+      {/* 主要內容區 */}
+      <div className="container mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* 左側篩選區 */}
-          <aside className={`lg:col-span-3 space-y-4 ${
-            showMobileFilter 
-              ? 'fixed inset-y-0 left-0 z-50 w-80 bg-background shadow-2xl overflow-y-auto lg:relative lg:inset-auto lg:w-auto lg:shadow-none' 
-              : 'hidden lg:block'
-          }`}>
-            <Card className="border-2 border-border shadow-lg bg-card">
-              <CardContent className="pt-6 space-y-6">
-                {/* 手機版關閉按鈕 */}
-                <div className="lg:hidden flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-bold text-primary">篩選條件</h2>
-                  <button
-                    onClick={() => setShowMobileFilter(false)}
-                    className="w-8 h-8 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center transition-colors"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-                {/* 搜尋 */}
-                <div>
-                  <h2 className="text-sm font-semibold mb-3 flex items-center gap-2 text-primary">
-                    <Search className="w-4 h-4" />
-                    搜尋店家
-                  </h2>
-                  <Input
-                    placeholder="輸入店名..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="border-2 border-border focus:border-primary"
-                  />
-                </div>
-
-                {/* 區域選擇 */}
-                <div>
-                  <h2 className="text-sm font-semibold mb-3 flex items-center gap-2 text-accent">
-                    <MapPin className="w-4 h-4" />
-                    選擇區域
-                  </h2>
-                  <div className="mb-3">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={getUserLocation}
-                      className="w-full border-2 border-accent/50 hover:bg-accent/10 hover:border-accent text-accent"
-                    >
-                      <Navigation className="w-4 h-4 mr-2" />
-                      使用我的位置
-                    </Button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {DISTRICTS.map(district => (
-                      <Button
-                        key={district}
-                        variant={selectedDistrict === district ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setSelectedDistrict(district)}
-                        className={selectedDistrict === district 
-                          ? "bg-primary hover:bg-primary/90 border-0 shadow-md" 
-                          : "border-2 border-border hover:border-primary/50 hover:bg-primary/5"}
-                      >
-                        {district}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 評價篩選 */}
-                <div>
-                  <h2 className="text-sm font-semibold mb-3 flex items-center gap-2 text-yellow-600">
-                    <Star className="w-4 h-4" />
-                    評價篩選
-                  </h2>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">最低評分</span>
-                      <span className="text-yellow-600 font-bold">{minRating[0].toFixed(1)}★</span>
-                    </div>
-                    <Slider
-                      value={minRating}
-                      onValueChange={setMinRating}
-                      max={5}
-                      min={0}
-                      step={0.1}
-                      className="[&_[role=slider]]:bg-primary [&_[role=slider]]:border-primary"
-                    />
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>0★</span>
-                      <span>5★</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 營業時間篩選 */}
-                <div>
-                  <h2 className="text-sm font-semibold mb-3 flex items-center gap-2 text-accent">
-                    <Clock className="w-4 h-4" />
-                    營業時間篩選
-                  </h2>
-                  <div className="space-y-3">
-                    <Button
-                      variant={timeFilterMode === "now" ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setTimeFilterMode("now")}
-                      className={`w-full ${
-                        timeFilterMode === "now" 
-                          ? "bg-primary hover:bg-primary/90 border-0 shadow-md" 
-                          : "border-2 border-border hover:border-primary/50 hover:bg-primary/5"
-                      }`}
-                    >
-                      現在營業中
-                    </Button>
-                    
-                    <Button
-                      variant={timeFilterMode === "custom" ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setTimeFilterMode("custom")}
-                      className={`w-full ${
-                        timeFilterMode === "custom" 
-                          ? "bg-primary hover:bg-primary/90 border-0 shadow-md" 
-                          : "border-2 border-border hover:border-primary/50 hover:bg-primary/5"
-                      }`}
-                    >
-                      <Calendar className="w-4 h-4 mr-2" />
-                      預計用餐時間
-                    </Button>
-
-                    {timeFilterMode === "custom" && (
-                      <div className="space-y-3 pt-3 border-t-2 border-border animate-in slide-in-from-top">
-                        <div>
-                          <Label className="text-xs text-muted-foreground mb-2 block">日期</Label>
-                          <Input
-                            type="date"
-                            value={selectedDate}
-                            onChange={(e) => setSelectedDate(e.target.value)}
-                            className="border-2 border-border focus:border-accent"
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-xs text-muted-foreground mb-2 block">時間</Label>
-                          <Input
-                            type="time"
-                            value={selectedTime}
-                            onChange={(e) => setSelectedTime(e.target.value)}
-                            className="border-2 border-border focus:border-accent"
-                          />
-                        </div>
-                        <p className="text-xs text-muted-foreground bg-accent/10 p-2 rounded border-2 border-accent/20">
-                          將顯示在 <span className="font-bold text-accent">{selectedTime}</span> 營業的店家
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* 結果統計 */}
-                <div className="pt-4 border-t-2 border-border">
-                  <div className="bg-primary/10 border-2 border-primary/30 rounded-lg p-3">
-                    <p className="text-sm text-foreground">
-                      找到 <span className="font-bold text-primary text-xl">{filteredStores.length}</span> 家店
-                    </p>
-                  </div>
-                </div>
-                
-                {/* 手機版確認按鈕 */}
-                <div className="lg:hidden pt-4">
-                  <Button
-                    onClick={() => setShowMobileFilter(false)}
-                    className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white border-0 shadow-lg"
-                  >
-                    查看 {filteredStores.length} 間店家
-                  </Button>
-                </div>
+          {/* 左側篩選區 - 桌面版 */}
+          <aside className="hidden lg:block lg:col-span-3">
+            <Card className="sticky top-6 border-2 border-border shadow-xl bg-card/95 backdrop-blur">
+              <CardContent className="p-6 space-y-6">
+                <FilterContent
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                  selectedDistrict={selectedDistrict}
+                  setSelectedDistrict={setSelectedDistrict}
+                  minRating={minRating}
+                  setMinRating={setMinRating}
+                  timeFilterMode={timeFilterMode}
+                  setTimeFilterMode={setTimeFilterMode}
+                  selectedDate={selectedDate}
+                  setSelectedDate={setSelectedDate}
+                  selectedTime={selectedTime}
+                  setSelectedTime={setSelectedTime}
+                  getUserLocation={getUserLocation}
+                  filteredCount={filteredStores.length}
+                />
               </CardContent>
             </Card>
           </aside>
 
-          {/* 中間列表區 */}
-          <main className="lg:col-span-5 space-y-4">
+          {/* 中間店家列表 */}
+          <main className="lg:col-span-6 space-y-4">
+            <div className="text-sm text-muted-foreground mb-4">
+              找到 <span className="font-bold text-primary">{filteredStores.length}</span> 間店家
+            </div>
+
             {filteredStores.length === 0 ? (
-              <Card className="border-2 border-border shadow-lg bg-card">
-                <CardContent className="py-16 text-center">
-                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
-                    <Search className="w-10 h-10 text-muted-foreground" />
-                  </div>
-                  <p className="text-foreground text-lg font-semibold mb-2">沒有符合條件的店家</p>
-                  <p className="text-muted-foreground text-sm">試試調整篩選條件</p>
-                </CardContent>
+              <Card className="border-2 border-dashed border-border p-12 text-center">
+                <p className="text-muted-foreground">沒有符合條件的店家，請調整篩選條件</p>
               </Card>
             ) : (
-              filteredStores.map(store => (
-                <Card
+              filteredStores.map((store: any) => (
+                <StoreCard
                   key={store.id}
-                  className={`border-2 border-border hover:border-primary/50 transition-all cursor-pointer group shadow-lg bg-card ${
-                    selectedStore === store.id ? "border-primary shadow-xl ring-2 ring-primary/20" : ""
-                  }`}
-                  onClick={() => setSelectedStore(store.id)}
-                >
-                  <CardContent className="p-0">
-                    <div className="flex flex-col">
-                      {/* 店家基本資訊 */}
-                      <div className="flex flex-col sm:flex-row">
-                        <div className="sm:w-48 h-48 sm:h-auto overflow-hidden relative">
-                          <img
-                            src={store.image}
-                            alt={store.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                        </div>
-                        <div className="flex-1 p-5 space-y-3">
-                          <div className="flex items-start justify-between gap-3">
-                            <h3 className="text-2xl font-bold text-foreground group-hover:text-primary transition-colors">
-                              {store.name}
-                            </h3>
-                            <div className="flex items-center gap-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setSelectedMenuStore(store.id);
-                                  setShowMenuDialog(true);
-                                }}
-                                className="border-2 border-primary/50 hover:bg-primary/10 hover:border-primary text-primary font-semibold"
-                              >
-                                <Menu className="w-4 h-4 mr-1" />
-                                查看菜單
-                              </Button>
-                              <Badge 
-                                variant={store.isOpen ? "default" : "secondary"} 
-                                className={store.isOpen 
-                                  ? "bg-green-500 text-white border-0" 
-                                  : "bg-muted text-muted-foreground border-2 border-border"}
-                              >
-                                {store.isOpen ? "營業中" : "休息中"}
-                              </Badge>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-1">
-                              <Star className="w-5 h-5 fill-yellow-500 text-yellow-500" />
-                              <span className="font-bold text-xl text-yellow-600">{store.rating}</span>
-                            </div>
-                            <span className="text-sm text-muted-foreground">({store.reviewCount}則評論)</span>
-                          </div>
-
-                          <div className="flex items-start gap-2 text-muted-foreground text-sm">
-                            <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-accent" />
-                            <span>{store.address}</span>
-                          </div>
-
-                          <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                            <Clock className="w-4 h-4 flex-shrink-0 text-accent" />
-                            <span>營業時間：<span className="text-foreground font-semibold">{store.openingHours}</span></span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* 評論區 - 橫向三欄 */}
-                      <div className="border-t-2 border-border p-4 bg-muted/30">
-                        <div className="flex items-center gap-2 mb-3">
-                          <MessageSquare className="w-4 h-4 text-accent" />
-                          <h4 className="text-sm font-semibold text-foreground">近期評論</h4>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                          {MOCK_REVIEWS[store.id as keyof typeof MOCK_REVIEWS]?.map((review, idx) => (
-                            <div key={idx} className="bg-card rounded-lg p-3 border-2 border-border hover:border-primary/30 transition-colors">
-                              <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center gap-2">
-                                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                                    <User className="w-3 h-3 text-primary" />
-                                  </div>
-                                  <span className="text-xs font-semibold text-foreground truncate">{review.author}</span>
-                                </div>
-                                <div className="flex items-center gap-0.5 flex-shrink-0">
-                                  {Array.from({length: review.rating}).map((_, i) => (
-                                    <Star key={i} className="w-3 h-3 fill-yellow-500 text-yellow-500" />
-                                  ))}
-                                </div>
-                              </div>
-                              <p className="text-xs text-muted-foreground mb-2 line-clamp-2">{review.text}</p>
-                              <span className="text-xs text-muted-foreground/70">{review.date}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                  store={store}
+                  isSelected={selectedStoreId === store.id}
+                  onClick={() => setSelectedStoreId(store.id)}
+                  onMenuClick={() => {
+                    setSelectedMenuStoreId(store.id);
+                    setShowMenuDialog(true);
+                  }}
+                />
               ))
             )}
           </main>
 
           {/* 右側地圖區 */}
-          <aside className="lg:col-span-4">
-            <Card className="border-2 border-border sticky top-6 overflow-hidden shadow-lg bg-card">
-              <CardContent className="p-0">
-                {selectedStore ? (
-                  <div className="h-[600px]">
-                    <iframe
-                      width="100%"
-                      height="100%"
-                      style={{border: 0}}
-                      loading="lazy"
-                      allowFullScreen
-                      referrerPolicy="no-referrer-when-downgrade"
-                      src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(MOCK_STORES.find(s => s.id === selectedStore)?.address || '')}&zoom=16`}
-                    />
-                  </div>
+          <aside className="hidden lg:block lg:col-span-3">
+            <Card className="sticky top-6 border-2 border-border shadow-xl bg-card/95 backdrop-blur overflow-hidden h-[calc(100vh-8rem)]">
+              <CardContent className="p-0 h-full">
+                {selectedStoreId && storesData ? (
+                  <MapView store={storesData.find((s: any) => s.id === selectedStoreId)!} />
                 ) : (
-                  <div className="relative h-[600px] bg-gradient-to-br from-primary/5 to-accent/5 flex items-center justify-center">
-                    <div className="relative z-10 text-center p-8">
-                      <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-muted flex items-center justify-center border-2 border-border">
-                        <MapPin className="w-10 h-10 text-muted-foreground" />
-                      </div>
-                      <p className="text-foreground text-lg font-semibold mb-2">點選左側店家</p>
-                      <p className="text-muted-foreground text-sm">在地圖上顯示位置</p>
-                    </div>
-                    
-                    {/* 裝飾性插畫元素 */}
-                    <svg className="absolute bottom-10 right-10 w-32 h-32 text-primary/10" viewBox="0 0 100 100">
-                      <circle cx="50" cy="70" r="25" fill="currentColor"/>
-                      <path d="M30,70 Q30,50 40,50 T50,70" fill="none" stroke="currentColor" strokeWidth="3"/>
-                      <path d="M50,70 Q50,45 60,45 T70,70" fill="none" stroke="currentColor" strokeWidth="3"/>
-                    </svg>
+                  <div className="h-full flex flex-col items-center justify-center p-6 text-center">
+                    <MapPin className="w-16 h-16 text-muted-foreground/30 mb-4" />
+                    <p className="text-muted-foreground">點選左側店家</p>
+                    <p className="text-sm text-muted-foreground/70">在地圖上顯示位置</p>
                   </div>
                 )}
               </CardContent>
             </Card>
           </aside>
         </div>
+      </div>
+
+      {/* 手機版篩選側邊欄 */}
+      {showMobileFilter && (
+        <div className="lg:hidden fixed inset-0 z-50">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setShowMobileFilter(false)} />
+          <div className="absolute left-0 top-0 bottom-0 w-80 bg-card shadow-2xl overflow-y-auto animate-in slide-in-from-left">
+            <div className="p-6 space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-lg">篩選條件</h3>
+                <Button variant="ghost" size="icon" onClick={() => setShowMobileFilter(false)}>
+                  <X className="w-5 h-5" />
+                </Button>
+              </div>
+              <FilterContent
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                selectedDistrict={selectedDistrict}
+                setSelectedDistrict={setSelectedDistrict}
+                minRating={minRating}
+                setMinRating={setMinRating}
+                timeFilterMode={timeFilterMode}
+                setTimeFilterMode={setTimeFilterMode}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                selectedTime={selectedTime}
+                setSelectedTime={setSelectedTime}
+                getUserLocation={getUserLocation}
+                filteredCount={filteredStores.length}
+              />
+              <Button
+                onClick={() => setShowMobileFilter(false)}
+                className="w-full bg-gradient-to-r from-primary to-accent"
+              >
+                查看 {filteredStores.length} 間店家
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 贊助對話框 */}
+      <Dialog open={showDonateDialog} onOpenChange={setShowDonateDialog}>
+        <DialogContent className="sm:max-w-md border-2 border-primary/20">
+          <DialogHeader>
+            <DialogTitle className="text-center text-2xl">喜歡這個選擇器嗎？</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="text-center space-y-2">
+              <div className="text-6xl mb-4">🍜</div>
+              <p className="text-muted-foreground">請我喝杯珍奶，讓我繼續維護更新</p>
+              <p className="text-sm text-muted-foreground/70">您的每一份支持都是我持續優化的動力！</p>
+            </div>
+            <div className="flex justify-center">
+              <a
+                href="https://hiyewei.bobaboba.me"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-primary to-accent text-white rounded-lg hover:opacity-90 transition-opacity"
+              >
+                <Heart className="w-5 h-5 mr-2" />
+                前往贊助頁面
+              </a>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* 菜單對話框 */}
+      <Dialog open={showMenuDialog} onOpenChange={setShowMenuDialog}>
+        <DialogContent className="sm:max-w-2xl border-2 border-primary/20 max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">
+              {selectedMenuStoreId && storesData?.find((s: any) => s.id === selectedMenuStoreId)?.name}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="bg-muted/30 rounded-lg p-4 border border-border">
+              <p className="text-sm text-muted-foreground">
+                ⚠️ 菜單資訊僅供參考，實際價格和品項請以店家現場為準
+              </p>
+            </div>
+            <div className="text-center text-muted-foreground">
+              <p>菜單資料整理中...</p>
+              <p className="text-sm mt-2">建議直接前往店家或查看 Google Maps 評論了解詳情</p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+// 篩選內容組件
+function FilterContent({
+  searchTerm, setSearchTerm,
+  selectedDistrict, setSelectedDistrict,
+  minRating, setMinRating,
+  timeFilterMode, setTimeFilterMode,
+  selectedDate, setSelectedDate,
+  selectedTime, setSelectedTime,
+  getUserLocation,
+  filteredCount
+}: any) {
+  return (
+    <>
+      {/* 搜尋店名 */}
+      <div className="space-y-2">
+        <Label className="flex items-center gap-2 text-sm font-medium">
+          <Search className="w-4 h-4 text-primary" />
+          搜尋店名
+        </Label>
+        <Input
+          placeholder="輸入店名..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="border-2 focus:border-primary"
+        />
+      </div>
+
+      {/* 選擇區域 */}
+      <div className="space-y-2">
+        <Label className="flex items-center gap-2 text-sm font-medium">
+          <MapPin className="w-4 h-4 text-primary" />
+          選擇區域
+        </Label>
+        <Button
+          onClick={getUserLocation}
+          variant="outline"
+          className="w-full mb-2 border-2 border-accent hover:bg-accent/10"
+        >
+          <Navigation className="w-4 h-4 mr-2" />
+          使用我的位置
+        </Button>
+        <div className="grid grid-cols-3 gap-2">
+          {DISTRICTS.map((district) => (
+            <Button
+              key={district}
+              variant={selectedDistrict === district ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSelectedDistrict(district)}
+              className={selectedDistrict === district ? "bg-primary" : "border-2"}
+            >
+              {district}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      {/* 評價篩選 */}
+      <div className="space-y-3">
+        <Label className="flex items-center gap-2 text-sm font-medium">
+          <Star className="w-4 h-4 text-primary fill-primary" />
+          評價篩選
+        </Label>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">最低評分</span>
+            <span className="font-bold text-primary">{minRating[0].toFixed(1)} ★</span>
+          </div>
+          <Slider
+            value={minRating}
+            onValueChange={setMinRating}
+            min={0}
+            max={5}
+            step={0.1}
+            className="w-full"
+          />
+          <div className="flex justify-between text-xs text-muted-foreground">
+            <span>0★</span>
+            <span>5★</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 營業狀況篩選 */}
+      <div className="space-y-3">
+        <Label className="flex items-center gap-2 text-sm font-medium">
+          <Clock className="w-4 h-4 text-primary" />
+          營業狀況篩選
+        </Label>
+        <div className="space-y-2">
+          <Button
+            variant={timeFilterMode === "now" ? "default" : "outline"}
+            onClick={() => setTimeFilterMode("now")}
+            className="w-full border-2"
+          >
+            <Clock className="w-4 h-4 mr-2" />
+            顯示全部
+          </Button>
+          <Button
+            variant={timeFilterMode === "custom" ? "default" : "outline"}
+            onClick={() => setTimeFilterMode("custom")}
+            className="w-full border-2"
+          >
+            <Calendar className="w-4 h-4 mr-2" />
+            預計用餐時間
+          </Button>
+          {timeFilterMode === "custom" && (
+            <div className="space-y-2 pt-2 border-t border-border">
+              <Input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="border-2"
+              />
+              <Input
+                type="time"
+                value={selectedTime}
+                onChange={(e) => setSelectedTime(e.target.value)}
+                className="border-2"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
+
+// 店家卡片組件
+function StoreCard({ store, isSelected, onClick, onMenuClick }: { store: any, isSelected: boolean, onClick: () => void, onMenuClick: () => void }) {
+  const { data: reviews } = trpc.reviews.byStoreId.useQuery(
+    { storeId: store.id, limit: 3 },
+    { enabled: isSelected }
+  );
+
+  const rating = store.rating || 0;
+  const reviewCount = store.reviewCount || 0;
+
+  return (
+    <Card
+      className={`border-2 transition-all cursor-pointer hover:shadow-xl ${
+        isSelected ? "border-primary shadow-2xl ring-4 ring-primary/20" : "border-border hover:border-primary/50"
+      }`}
+      onClick={onClick}
+    >
+      <CardContent className="p-0">
+        <div className="flex flex-col sm:flex-row">
+          {/* 店家圖片 */}
+          <div className="sm:w-1/3 h-48 sm:h-auto bg-muted relative overflow-hidden">
+            {store.photoUrl ? (
+              <img
+                src={store.photoUrl}
+                alt={store.name}
+                className="w-full h-full object-cover transition-transform hover:scale-110"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&h=300&fit=crop";
+                }}
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
+                <span className="text-4xl">🍜</span>
+              </div>
+            )}
+          </div>
+
+          {/* 店家資訊 */}
+          <div className="flex-1 p-5 space-y-3">
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="text-xl font-bold mb-1">{store.name}</h3>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <div className="flex items-center gap-1">
+                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    <span className="font-bold">{rating.toFixed(1)}</span>
+                  </div>
+                  <span className="text-sm text-muted-foreground">({reviewCount}則評論)</span>
+                  <Badge variant="secondary" className="bg-accent/20 text-accent-foreground border border-accent">
+                    營業中
+                  </Badge>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onMenuClick();
+                }}
+                className="border-2 border-primary/50 hover:bg-primary/10"
+              >
+                📋 查看菜單
+              </Button>
+            </div>
+
+            <div className="space-y-1 text-sm">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <MapPin className="w-4 h-4 flex-shrink-0" />
+                <span>{store.address}</span>
+              </div>
+              {store.openingHours && store.openingHours.length > 0 && (
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Clock className="w-4 h-4 flex-shrink-0" />
+                  <span>營業時間：{store.openingHours[0]}</span>
+                </div>
+              )}
+            </div>
+
+            {/* 近期評論 */}
+            {isSelected && reviews && reviews.length > 0 && (
+              <div className="border-t border-border/50 pt-4 mt-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <MessageSquare className="w-4 h-4 text-primary" />
+                  <span className="font-medium text-sm">近期評論</span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {reviews.map((review: any, idx: number) => (
+                    <div key={idx} className="bg-muted/30 rounded-lg p-3 border border-border/50 hover:border-primary/30 transition-colors">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <User className="w-4 h-4 text-muted-foreground" />
+                          <span className="font-medium text-sm">{review.authorName}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`w-3 h-3 ${
+                                i < (review.rating || 0) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground line-clamp-2">{review.text}</p>
+                      <p className="text-xs text-muted-foreground/70 mt-2">{review.relativeTime}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// 地圖視圖組件
+function MapView({ store }: { store: any }) {
+  const lat = parseFloat(store.lat || "0");
+  const lng = parseFloat(store.lng || "0");
+  const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'AIzaSyD80kuCrJFFj2zsxRTrmxPTbRbVrqEAn3U'}&q=${encodeURIComponent(store.name)},${encodeURIComponent(store.address)}`;
+
+  return (
+    <div className="h-full flex flex-col">
+      <div className="p-4 border-b border-border bg-card">
+        <h3 className="font-bold text-lg mb-2">{store.name}</h3>
+        <p className="text-sm text-muted-foreground flex items-center gap-2">
+          <MapPin className="w-4 h-4" />
+          {store.address}
+        </p>
+        {store.googleMapsUrl && (
+          <a
+            href={store.googleMapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-flex items-center gap-2 text-sm text-primary hover:underline"
+          >
+            <Navigation className="w-4 h-4" />
+            在 Google Maps 中開啟
+          </a>
+        )}
+      </div>
+      <div className="flex-1 relative">
+        <iframe
+          src={mapUrl}
+          className="w-full h-full border-0"
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
       </div>
     </div>
   );
