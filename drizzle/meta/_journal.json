@@ -15,6 +15,13 @@
       "when": 1760710263108,
       "tag": "0001_even_grey_gargoyle",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1760711124852,
+      "tag": "0002_shocking_edwin_jarvis",
+      "breakpoints": true
     }
   ]
 }

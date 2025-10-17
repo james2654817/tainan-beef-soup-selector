@@ -75,3 +75,19 @@ export const storePhotos = mysqlTable("storePhotos", {
 
 export type StorePhoto = typeof storePhotos.$inferSelect;
 export type InsertStorePhoto = typeof storePhotos.$inferInsert;
+
+/**
+ * 店家菜單資料表
+ */
+export const menuItems = mysqlTable("menuItems", {
+  id: int("id").primaryKey().autoincrement(),
+  storeId: varchar("storeId", { length: 128 }).notNull(),
+  name: varchar("name", { length: 255 }).notNull(), // 菜色名稱
+  price: varchar("price", { length: 64 }), // 價格（可能是範圍，如 "$80-120"）
+  description: text("description"), // 描述
+  confidence: varchar("confidence", { length: 32 }), // 資料可信度: high, medium, low
+  createdAt: timestamp("createdAt").defaultNow(),
+});
+
+export type MenuItem = typeof menuItems.$inferSelect;
+export type InsertMenuItem = typeof menuItems.$inferInsert;

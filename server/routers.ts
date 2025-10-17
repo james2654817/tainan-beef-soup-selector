@@ -95,6 +95,16 @@ export const appRouter = router({
         return await db.getPhotosByStoreId(input.storeId, input.limit);
       }),
   }),
+
+  // 菜單 API
+  menu: router({
+    // 取得店家菜單
+    byStoreId: publicProcedure
+      .input(z.object({ storeId: z.string() }))
+      .query(async ({ input }) => {
+        return await db.getMenuItems(input.storeId);
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

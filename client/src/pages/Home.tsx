@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MapPin, Star, Clock, Search, Calendar, Navigation, MessageSquare, User, Heart, Menu, Filter, X } from "lucide-react";
+import { MenuDialog } from "@/components/MenuDialog";
 
 const DISTRICTS = ["全部區域", "中西區", "東區", "南區", "北區", "安平區", "安南區", "永康區", "歸仁區"];
 
@@ -318,26 +319,12 @@ export default function Home() {
       </Dialog>
 
       {/* 菜單對話框 */}
-      <Dialog open={showMenuDialog} onOpenChange={setShowMenuDialog}>
-        <DialogContent className="sm:max-w-2xl border-2 border-primary/20 max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-2xl">
-              {selectedMenuStoreId && storesData?.find((s: any) => s.id === selectedMenuStoreId)?.name}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="bg-muted/30 rounded-lg p-4 border border-border">
-              <p className="text-sm text-muted-foreground">
-                ⚠️ 菜單資訊僅供參考，實際價格和品項請以店家現場為準
-              </p>
-            </div>
-            <div className="text-center text-muted-foreground">
-              <p>菜單資料整理中...</p>
-              <p className="text-sm mt-2">建議直接前往店家或查看 Google Maps 評論了解詳情</p>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <MenuDialog 
+        storeId={selectedMenuStoreId} 
+        storeName={selectedMenuStoreId && storesData?.find((s: any) => s.id === selectedMenuStoreId)?.name}
+        open={showMenuDialog} 
+        onOpenChange={setShowMenuDialog} 
+      />
     </div>
   );
 }

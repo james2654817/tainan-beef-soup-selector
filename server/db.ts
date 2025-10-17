@@ -1,6 +1,6 @@
 import { eq, and, gte, like, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, stores, reviews, storePhotos } from "../drizzle/schema";
+import { InsertUser, users, stores, reviews, storePhotos, menuItems } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -95,11 +95,11 @@ export async function getAllStores() {
   return result;
 }
 
-export async function getStoreById(storeId: string) {
+export async function getStoreById(id: string) {
   const db = await getDb();
   if (!db) return null;
 
-  const result = await db.select().from(stores).where(eq(stores.id, storeId)).limit(1);
+  const result = await db.select().from(stores).where(eq(stores.id, id)).limit(1);
   return result.length > 0 ? result[0] : null;
 }
 
@@ -170,3 +170,14 @@ export async function getPhotosByStoreId(storeId: string, limit: number = 5) {
   
   return result;
 }
+
+// 菜單相關查詢
+
+export async function getMenuItems(storeId: string) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const items = await db.select().from(menuItems).where(eq(menuItems.storeId, storeId));
+  return items;
+}
+

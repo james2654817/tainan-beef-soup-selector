@@ -1,0 +1,800 @@
+{
+  "ChIJuSIMDFR2bjQRO5xlAsCglKA": {
+    "store_name": "六千牛肉湯(府前店)",
+    "items": [
+      {
+        "name": "牛肉湯",
+        "price": "$80-120",
+        "description": "新鮮溫體牛肉，湯頭清甜",
+        "confidence": "medium"
+      },
+      {
+        "name": "白飯",
+        "price": "$10-20",
+        "description": "搭配牛肉湯最佳",
+        "confidence": "medium"
+      },
+      {
+        "name": "綜合牛肉湯",
+        "price": "$100-150",
+        "description": "牛肉、牛腱、牛筋綜合",
+        "confidence": "low"
+      },
+      {
+        "name": "牛肉麵",
+        "price": "$90-130",
+        "description": "Q彈麵條搭配鮮甜湯頭",
+        "confidence": "low"
+      },
+      {
+        "name": "牛腩湯",
+        "price": "$100-140",
+        "description": "軟嫩牛腩，入口即化",
+        "confidence": "low"
+      },
+      {
+        "name": "牛筋湯",
+        "price": "$90-130",
+        "description": "膠質豐富，口感Q彈",
+        "confidence": "low"
+      }
+    ],
+    "note": "本菜單資訊整理自 Google Maps 評論及台南牛肉湯常見品項，實際菜單、價格請以店家現場為準。"
+  },
+  "ChIJDXFiuxp2bjQRSldJ3YTNG8M": {
+    "store_name": "文章牛肉湯",
+    "items": [
+      {
+        "name": "牛肉湯",
+        "price": "$190",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "牛肉炒飯",
+        "price": "$160",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "牛肉麵",
+        "price": "$90-130",
+        "description": "Q彈麵條搭配鮮甜湯頭",
+        "confidence": "medium"
+      },
+      {
+        "name": "綜合牛肉湯",
+        "price": "$100-150",
+        "description": "牛肉、牛腱、牛筋綜合",
+        "confidence": "low"
+      },
+      {
+        "name": "牛腩湯",
+        "price": "$100-140",
+        "description": "軟嫩牛腩，入口即化",
+        "confidence": "low"
+      },
+      {
+        "name": "牛筋湯",
+        "price": "$90-130",
+        "description": "膠質豐富，口感Q彈",
+        "confidence": "low"
+      }
+    ],
+    "note": "本菜單資訊整理自 Google Maps 評論及台南牛肉湯常見品項，實際菜單、價格請以店家現場為準。"
+  },
+  "ChIJm9eMEOhwbjQR2zhJtyS0cTg": {
+    "store_name": "阿鳳牛肉湯",
+    "items": [
+      {
+        "name": "牛肉湯",
+        "price": "$80-120",
+        "description": "新鮮溫體牛肉，湯頭清甜",
+        "confidence": "medium"
+      },
+      {
+        "name": "綜合牛肉湯",
+        "price": "$100-150",
+        "description": "牛肉、牛腱、牛筋綜合",
+        "confidence": "low"
+      },
+      {
+        "name": "牛肉麵",
+        "price": "$90-130",
+        "description": "Q彈麵條搭配鮮甜湯頭",
+        "confidence": "low"
+      },
+      {
+        "name": "牛腩湯",
+        "price": "$100-140",
+        "description": "軟嫩牛腩，入口即化",
+        "confidence": "low"
+      },
+      {
+        "name": "牛筋湯",
+        "price": "$90-130",
+        "description": "膠質豐富，口感Q彈",
+        "confidence": "low"
+      },
+      {
+        "name": "牛雜湯",
+        "price": "$80-120",
+        "description": "牛肚、牛腸等內臟",
+        "confidence": "low"
+      }
+    ],
+    "note": "本菜單資訊整理自 Google Maps 評論及台南牛肉湯常見品項，實際菜單、價格請以店家現場為準。"
+  },
+  "ChIJwdi8cGF2bjQR9AguEJLNCXs": {
+    "store_name": "石精臼牛肉湯",
+    "items": [
+      {
+        "name": "牛肉湯",
+        "price": "$80-120",
+        "description": "新鮮溫體牛肉，湯頭清甜",
+        "confidence": "medium"
+      },
+      {
+        "name": "綜合牛肉湯",
+        "price": "$100-150",
+        "description": "牛肉、牛腱、牛筋綜合",
+        "confidence": "low"
+      },
+      {
+        "name": "牛肉麵",
+        "price": "$90-130",
+        "description": "Q彈麵條搭配鮮甜湯頭",
+        "confidence": "low"
+      },
+      {
+        "name": "牛腩湯",
+        "price": "$100-140",
+        "description": "軟嫩牛腩，入口即化",
+        "confidence": "low"
+      },
+      {
+        "name": "牛筋湯",
+        "price": "$90-130",
+        "description": "膠質豐富，口感Q彈",
+        "confidence": "low"
+      },
+      {
+        "name": "牛雜湯",
+        "price": "$80-120",
+        "description": "牛肚、牛腸等內臟",
+        "confidence": "low"
+      }
+    ],
+    "note": "本菜單資訊整理自 Google Maps 評論及台南牛肉湯常見品項，實際菜單、價格請以店家現場為準。"
+  },
+  "ChIJv9hbKx12bjQRJmLpqLWzqsk": {
+    "store_name": "阿財牛肉湯",
+    "items": [
+      {
+        "name": "牛肉湯",
+        "price": "$130",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "滷肉飯",
+        "price": "$25-40",
+        "description": "古早味滷肉",
+        "confidence": "medium"
+      },
+      {
+        "name": "白飯",
+        "price": "$251",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "綜合牛肉湯",
+        "price": "$100-150",
+        "description": "牛肉、牛腱、牛筋綜合",
+        "confidence": "low"
+      },
+      {
+        "name": "牛肉麵",
+        "price": "$90-130",
+        "description": "Q彈麵條搭配鮮甜湯頭",
+        "confidence": "low"
+      },
+      {
+        "name": "牛腩湯",
+        "price": "$100-140",
+        "description": "軟嫩牛腩，入口即化",
+        "confidence": "low"
+      }
+    ],
+    "note": "本菜單資訊整理自 Google Maps 評論及台南牛肉湯常見品項，實際菜單、價格請以店家現場為準。"
+  },
+  "ChIJ-YyXwxp2bjQRnZKJoaUZkOU": {
+    "store_name": "助仔牛肉湯",
+    "items": [
+      {
+        "name": "牛肉湯",
+        "price": "$110",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "綜合牛肉湯",
+        "price": "$100-150",
+        "description": "牛肉、牛腱、牛筋綜合",
+        "confidence": "low"
+      },
+      {
+        "name": "牛肉麵",
+        "price": "$90-130",
+        "description": "Q彈麵條搭配鮮甜湯頭",
+        "confidence": "low"
+      },
+      {
+        "name": "牛腩湯",
+        "price": "$100-140",
+        "description": "軟嫩牛腩，入口即化",
+        "confidence": "low"
+      },
+      {
+        "name": "牛筋湯",
+        "price": "$90-130",
+        "description": "膠質豐富，口感Q彈",
+        "confidence": "low"
+      },
+      {
+        "name": "牛雜湯",
+        "price": "$80-120",
+        "description": "牛肚、牛腸等內臟",
+        "confidence": "low"
+      }
+    ],
+    "note": "本菜單資訊整理自 Google Maps 評論及台南牛肉湯常見品項，實際菜單、價格請以店家現場為準。"
+  },
+  "ChIJOwhpYmZ2bjQR9O1IbVc0X4s": {
+    "store_name": "康樂街牛肉湯",
+    "items": [
+      {
+        "name": "牛肉湯",
+        "price": "$180",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "牛心",
+        "price": "$180",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "白飯",
+        "price": "$180",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "牛腩",
+        "price": "$30",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "肉燥飯",
+        "price": "$30",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "綜合牛肉湯",
+        "price": "$100-150",
+        "description": "牛肉、牛腱、牛筋綜合",
+        "confidence": "low"
+      }
+    ],
+    "note": "本菜單資訊整理自 Google Maps 評論及台南牛肉湯常見品項，實際菜單、價格請以店家現場為準。"
+  },
+  "ChIJcd4QHXt2bjQRfM7pW4nrtaE": {
+    "store_name": "阿村牛肉湯",
+    "items": [
+      {
+        "name": "牛肉湯",
+        "price": "$120",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "綜合牛肉湯",
+        "price": "$100-150",
+        "description": "牛肉、牛腱、牛筋綜合",
+        "confidence": "low"
+      },
+      {
+        "name": "牛肉麵",
+        "price": "$90-130",
+        "description": "Q彈麵條搭配鮮甜湯頭",
+        "confidence": "low"
+      },
+      {
+        "name": "牛腩湯",
+        "price": "$100-140",
+        "description": "軟嫩牛腩，入口即化",
+        "confidence": "low"
+      },
+      {
+        "name": "牛筋湯",
+        "price": "$90-130",
+        "description": "膠質豐富，口感Q彈",
+        "confidence": "low"
+      },
+      {
+        "name": "牛雜湯",
+        "price": "$80-120",
+        "description": "牛肚、牛腸等內臟",
+        "confidence": "low"
+      }
+    ],
+    "note": "本菜單資訊整理自 Google Maps 評論及台南牛肉湯常見品項，實際菜單、價格請以店家現場為準。"
+  },
+  "ChIJC9c687t2bjQRBs1JpxP7Knw": {
+    "store_name": "旺哥牛肉湯",
+    "items": [
+      {
+        "name": "牛肉湯",
+        "price": "$25",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "牛腩",
+        "price": "$114",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "白飯",
+        "price": "$10-20",
+        "description": "搭配牛肉湯最佳",
+        "confidence": "medium"
+      },
+      {
+        "name": "牛肚",
+        "price": "$400",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "綜合牛肉湯",
+        "price": "$100-150",
+        "description": "牛肉、牛腱、牛筋綜合",
+        "confidence": "low"
+      },
+      {
+        "name": "牛肉麵",
+        "price": "$90-130",
+        "description": "Q彈麵條搭配鮮甜湯頭",
+        "confidence": "low"
+      }
+    ],
+    "note": "本菜單資訊整理自 Google Maps 評論及台南牛肉湯常見品項，實際菜單、價格請以店家現場為準。"
+  },
+  "ChIJ-3-oodBwbjQRbzoZ8oFJWBQ": {
+    "store_name": "阿明牛肉湯",
+    "items": [
+      {
+        "name": "牛肉湯",
+        "price": "$80-120",
+        "description": "新鮮溫體牛肉，湯頭清甜",
+        "confidence": "medium"
+      },
+      {
+        "name": "牛肉麵",
+        "price": "$90-130",
+        "description": "Q彈麵條搭配鮮甜湯頭",
+        "confidence": "medium"
+      },
+      {
+        "name": "綜合牛肉湯",
+        "price": "$100-150",
+        "description": "牛肉、牛腱、牛筋綜合",
+        "confidence": "low"
+      },
+      {
+        "name": "牛腩湯",
+        "price": "$100-140",
+        "description": "軟嫩牛腩，入口即化",
+        "confidence": "low"
+      },
+      {
+        "name": "牛筋湯",
+        "price": "$90-130",
+        "description": "膠質豐富，口感Q彈",
+        "confidence": "low"
+      },
+      {
+        "name": "牛雜湯",
+        "price": "$80-120",
+        "description": "牛肚、牛腸等內臟",
+        "confidence": "low"
+      }
+    ],
+    "note": "本菜單資訊整理自 Google Maps 評論及台南牛肉湯常見品項，實際菜單、價格請以店家現場為準。"
+  },
+  "ChIJz6N8OQlzbjQRwwtEcVi8ZTo": {
+    "store_name": "阿裕牛肉湯",
+    "items": [
+      {
+        "name": "滷肉飯",
+        "price": "$25-40",
+        "description": "古早味滷肉",
+        "confidence": "medium"
+      },
+      {
+        "name": "牛肉湯",
+        "price": "$80-120",
+        "description": "新鮮溫體牛肉，湯頭清甜",
+        "confidence": "low"
+      },
+      {
+        "name": "綜合牛肉湯",
+        "price": "$100-150",
+        "description": "牛肉、牛腱、牛筋綜合",
+        "confidence": "low"
+      },
+      {
+        "name": "牛肉麵",
+        "price": "$90-130",
+        "description": "Q彈麵條搭配鮮甜湯頭",
+        "confidence": "low"
+      },
+      {
+        "name": "牛腩湯",
+        "price": "$100-140",
+        "description": "軟嫩牛腩，入口即化",
+        "confidence": "low"
+      },
+      {
+        "name": "牛筋湯",
+        "price": "$90-130",
+        "description": "膠質豐富，口感Q彈",
+        "confidence": "low"
+      }
+    ],
+    "note": "本菜單資訊整理自 Google Maps 評論及台南牛肉湯常見品項，實際菜單、價格請以店家現場為準。"
+  },
+  "ChIJ2enIBGR2bjQRxUyAJkF7TFI": {
+    "store_name": "阿松牛肉湯",
+    "items": [
+      {
+        "name": "牛肉湯",
+        "price": "$80-120",
+        "description": "新鮮溫體牛肉，湯頭清甜",
+        "confidence": "medium"
+      },
+      {
+        "name": "綜合牛肉湯",
+        "price": "$100-150",
+        "description": "牛肉、牛腱、牛筋綜合",
+        "confidence": "low"
+      },
+      {
+        "name": "牛肉麵",
+        "price": "$90-130",
+        "description": "Q彈麵條搭配鮮甜湯頭",
+        "confidence": "low"
+      },
+      {
+        "name": "牛腩湯",
+        "price": "$100-140",
+        "description": "軟嫩牛腩，入口即化",
+        "confidence": "low"
+      },
+      {
+        "name": "牛筋湯",
+        "price": "$90-130",
+        "description": "膠質豐富，口感Q彈",
+        "confidence": "low"
+      },
+      {
+        "name": "牛雜湯",
+        "price": "$80-120",
+        "description": "牛肚、牛腸等內臟",
+        "confidence": "low"
+      }
+    ],
+    "note": "本菜單資訊整理自 Google Maps 評論及台南牛肉湯常見品項，實際菜單、價格請以店家現場為準。"
+  },
+  "ChIJHaW1vHp2bjQR5Rb0oxxorjI": {
+    "store_name": "阿輝牛肉湯",
+    "items": [
+      {
+        "name": "牛肉湯",
+        "price": "$20",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "白飯",
+        "price": "$150",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "綜合牛肉湯",
+        "price": "$100-150",
+        "description": "牛肉、牛腱、牛筋綜合",
+        "confidence": "low"
+      },
+      {
+        "name": "牛肉麵",
+        "price": "$90-130",
+        "description": "Q彈麵條搭配鮮甜湯頭",
+        "confidence": "low"
+      },
+      {
+        "name": "牛腩湯",
+        "price": "$100-140",
+        "description": "軟嫩牛腩，入口即化",
+        "confidence": "low"
+      },
+      {
+        "name": "牛筋湯",
+        "price": "$90-130",
+        "description": "膠質豐富，口感Q彈",
+        "confidence": "low"
+      }
+    ],
+    "note": "本菜單資訊整理自 Google Maps 評論及台南牛肉湯常見品項，實際菜單、價格請以店家現場為準。"
+  },
+  "阿堂牛肉湯": {
+    "store_name": "阿堂牛肉湯",
+    "items": [
+      {
+        "name": "牛肉湯",
+        "price": "$80-120",
+        "description": "新鮮溫體牛肉，湯頭清甜",
+        "confidence": "low"
+      },
+      {
+        "name": "綜合牛肉湯",
+        "price": "$100-150",
+        "description": "牛肉、牛腱、牛筋綜合",
+        "confidence": "low"
+      },
+      {
+        "name": "牛肉麵",
+        "price": "$90-130",
+        "description": "Q彈麵條搭配鮮甜湯頭",
+        "confidence": "low"
+      },
+      {
+        "name": "牛腩湯",
+        "price": "$100-140",
+        "description": "軟嫩牛腩，入口即化",
+        "confidence": "low"
+      },
+      {
+        "name": "牛筋湯",
+        "price": "$90-130",
+        "description": "膠質豐富，口感Q彈",
+        "confidence": "low"
+      },
+      {
+        "name": "牛雜湯",
+        "price": "$80-120",
+        "description": "牛肚、牛腸等內臟",
+        "confidence": "low"
+      }
+    ],
+    "note": "本菜單資訊整理自 Google Maps 評論及台南牛肉湯常見品項，實際菜單、價格請以店家現場為準。"
+  },
+  "ChIJFcYijGZ2bjQR2ZBm1s7KeBY": {
+    "store_name": "阿江牛肉湯",
+    "items": [
+      {
+        "name": "牛肉湯",
+        "price": "$80-120",
+        "description": "新鮮溫體牛肉，湯頭清甜",
+        "confidence": "low"
+      },
+      {
+        "name": "綜合牛肉湯",
+        "price": "$100-150",
+        "description": "牛肉、牛腱、牛筋綜合",
+        "confidence": "low"
+      },
+      {
+        "name": "牛肉麵",
+        "price": "$90-130",
+        "description": "Q彈麵條搭配鮮甜湯頭",
+        "confidence": "low"
+      },
+      {
+        "name": "牛腩湯",
+        "price": "$100-140",
+        "description": "軟嫩牛腩，入口即化",
+        "confidence": "low"
+      },
+      {
+        "name": "牛筋湯",
+        "price": "$90-130",
+        "description": "膠質豐富，口感Q彈",
+        "confidence": "low"
+      },
+      {
+        "name": "牛雜湯",
+        "price": "$80-120",
+        "description": "牛肚、牛腸等內臟",
+        "confidence": "low"
+      }
+    ],
+    "note": "本菜單資訊整理自 Google Maps 評論及台南牛肉湯常見品項，實際菜單、價格請以店家現場為準。"
+  },
+  "ChIJu-7HscF2bjQRXRxYUPuzlg8": {
+    "store_name": "阿和牛肉湯",
+    "items": [
+      {
+        "name": "牛肉湯",
+        "price": "$170",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "肉燥飯",
+        "price": "$170",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "白飯",
+        "price": "$10-20",
+        "description": "搭配牛肉湯最佳",
+        "confidence": "medium"
+      },
+      {
+        "name": "滷肉飯",
+        "price": "$25-40",
+        "description": "古早味滷肉",
+        "confidence": "medium"
+      },
+      {
+        "name": "綜合牛肉湯",
+        "price": "$100-150",
+        "description": "牛肉、牛腱、牛筋綜合",
+        "confidence": "low"
+      },
+      {
+        "name": "牛肉麵",
+        "price": "$90-130",
+        "description": "Q彈麵條搭配鮮甜湯頭",
+        "confidence": "low"
+      }
+    ],
+    "note": "本菜單資訊整理自 Google Maps 評論及台南牛肉湯常見品項，實際菜單、價格請以店家現場為準。"
+  },
+  "ChIJHYnqHVx2bjQRvimVfc2ECvU": {
+    "store_name": "阿文牛肉湯",
+    "items": [
+      {
+        "name": "牛肉湯",
+        "price": "$100",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "白飯",
+        "price": "$10-20",
+        "description": "搭配牛肉湯最佳",
+        "confidence": "medium"
+      },
+      {
+        "name": "綜合牛肉湯",
+        "price": "$100-150",
+        "description": "牛肉、牛腱、牛筋綜合",
+        "confidence": "low"
+      },
+      {
+        "name": "牛肉麵",
+        "price": "$90-130",
+        "description": "Q彈麵條搭配鮮甜湯頭",
+        "confidence": "low"
+      },
+      {
+        "name": "牛腩湯",
+        "price": "$100-140",
+        "description": "軟嫩牛腩，入口即化",
+        "confidence": "low"
+      },
+      {
+        "name": "牛筋湯",
+        "price": "$90-130",
+        "description": "膠質豐富，口感Q彈",
+        "confidence": "low"
+      }
+    ],
+    "note": "本菜單資訊整理自 Google Maps 評論及台南牛肉湯常見品項，實際菜單、價格請以店家現場為準。"
+  },
+  "ChIJgc23HRwFbjQRuTMMCZL1Do4": {
+    "store_name": "永記牛肉湯",
+    "items": [
+      {
+        "name": "牛肉湯",
+        "price": "$150",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "綜合牛肉湯",
+        "price": "$100-150",
+        "description": "牛肉、牛腱、牛筋綜合",
+        "confidence": "low"
+      },
+      {
+        "name": "牛肉麵",
+        "price": "$90-130",
+        "description": "Q彈麵條搭配鮮甜湯頭",
+        "confidence": "low"
+      },
+      {
+        "name": "牛腩湯",
+        "price": "$100-140",
+        "description": "軟嫩牛腩，入口即化",
+        "confidence": "low"
+      },
+      {
+        "name": "牛筋湯",
+        "price": "$90-130",
+        "description": "膠質豐富，口感Q彈",
+        "confidence": "low"
+      },
+      {
+        "name": "牛雜湯",
+        "price": "$80-120",
+        "description": "牛肚、牛腸等內臟",
+        "confidence": "low"
+      }
+    ],
+    "note": "本菜單資訊整理自 Google Maps 評論及台南牛肉湯常見品項，實際菜單、價格請以店家現場為準。"
+  },
+  "ChIJaZoUZ4B-bjQRjcQsSiS7YEc": {
+    "store_name": "阿榮牛肉湯",
+    "items": [
+      {
+        "name": "牛肉湯",
+        "price": "$120",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "牛雜",
+        "price": "$120",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "肉燥飯",
+        "price": "$120",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "白飯",
+        "price": "$120",
+        "description": "評論中提及",
+        "confidence": "high"
+      },
+      {
+        "name": "綜合牛肉湯",
+        "price": "$100-150",
+        "description": "牛肉、牛腱、牛筋綜合",
+        "confidence": "low"
+      },
+      {
+        "name": "牛肉麵",
+        "price": "$90-130",
+        "description": "Q彈麵條搭配鮮甜湯頭",
+        "confidence": "low"
+      }
+    ],
+    "note": "本菜單資訊整理自 Google Maps 評論及台南牛肉湯常見品項，實際菜單、價格請以店家現場為準。"
+  }
+}
