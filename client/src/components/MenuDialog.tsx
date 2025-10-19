@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { AlertCircle, Utensils } from "lucide-react";
+import { AlertCircle, Utensils, X } from "lucide-react";
 
 interface MenuDialogProps {
   storeId: string | null;
@@ -10,19 +11,22 @@ interface MenuDialogProps {
 }
 
 export function MenuDialog({ storeId, storeName, open, onOpenChange }: MenuDialogProps) {
+  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+  
   const { data: menuItems, isLoading } = trpc.menu.byStoreId.useQuery(
     { storeId: storeId || "" },
     { enabled: !!storeId && open }
   );
   
-  const { data: storeData } = trpc.stores.list.useQuery();
-  const currentStore = storeData?.find((s: any) => s.id === storeId);
-  
-  // 從 store 的 photos 中取得菜單照片（前5張）
-  const menuPhotos = (currentStore as any)?.photos?.slice(0, 5) || [];
+  // 取得店家照片（用於顯示菜單照片）
+  const { data: menuPhotos } = trpc.photos.byStoreId.useQuery(
+    { storeId: storeId || "", limit: 10 },
+    { enabled: !!storeId && open }
+  );
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <>
+    <Dialog open={open} onOpenChange={selectedPhoto ? () => {} : onOpenChange}>
       <DialogContent className="sm:max-w-2xl border-2 border-primary/20 max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl flex items-center gap-2">
@@ -32,31 +36,20 @@ export function MenuDialog({ storeId, storeName, open, onOpenChange }: MenuDialo
         </DialogHeader>
         
         <div className="space-y-4 py-4">
-          {/* 免責聲明 */}
-          <div className="bg-amber-50 dark:bg-amber-950/30 rounded-lg p-4 border-2 border-amber-200 dark:border-amber-800">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" />
-              <div className="space-y-1">
-                <p className="font-medium text-amber-900 dark:text-amber-100">
-                  ⚠️ 重要提醒
-                </p>
-                <p className="text-sm text-amber-800 dark:text-amber-200">
-                  以下菜單資訊由系統從評論中自動提取，僅供參考。實際菜色、價格、供應狀況請以店家現場為準。
-                </p>
-              </div>
-            </div>
-          </div>
-
           {/* 菜單照片 */}
-          {menuPhotos.length > 0 && (
+          {menuPhotos && menuPhotos.length > 0 && (
             <div className="space-y-2">
               <h3 className="font-bold text-lg flex items-center gap-2">
                 <Utensils className="w-5 h-5 text-primary" />
                 菜單照片
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {menuPhotos.map((photo: any, index: number) => (
-                  <div key={index} className="aspect-square rounded-lg overflow-hidden border-2 border-border hover:border-primary/50 transition-colors">
+                {menuPhotos?.map((photo: any, index: number) => (
+                  <div 
+                    key={index} 
+                    className="aspect-square rounded-lg overflow-hidden border-2 border-border hover:border-primary/50 transition-colors cursor-pointer"
+                    onClick={() => setSelectedPhoto(photo.url || photo.photoUrl)}
+                  >
                     <img 
                       src={photo.url || photo.photoUrl} 
                       alt={`菜單 ${index + 1}`}
@@ -116,9 +109,54 @@ export function MenuDialog({ storeId, storeName, open, onOpenChange }: MenuDialo
               <p>共 {menuItems.length} 項菜色 • 資料來源：Google Maps 評論</p>
             </div>
           )}
+          
+          {/* 免責聲明 */}
+          <div className="bg-amber-50 dark:bg-amber-950/30 rounded-lg p-4 border-2 border-amber-200 dark:border-amber-800">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <p className="font-medium text-amber-900 dark:text-amber-100">
+                  ⚠️ 重要提醒
+                </p>
+                <p className="text-sm text-amber-800 dark:text-amber-200">
+                  以下菜單資訊由系統從評論中自動提取，僅供參考。實際菜色、價格、供應狀況請以店家現場為準。
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
+      
+    {/* 照片放大對話框 */}
+    {selectedPhoto && (
+      <div 
+        className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4 pointer-events-auto"
+        onClick={(e) => {
+          e.stopPropagation();
+          e.nativeEvent.stopImmediatePropagation();
+          setSelectedPhoto(null);
+        }}
+      >
+        <button
+          className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+          onClick={(e) => {
+            e.stopPropagation();
+            setSelectedPhoto(null);
+          }}
+        >
+          <X className="w-6 h-6 text-white" />
+        </button>
+        <img 
+          src={selectedPhoto} 
+          alt="放大照片"
+          className="max-w-full max-h-full object-contain"
+          onClick={(e) => e.stopPropagation()}
+        />
+      </div>
+    )}
+    </>
+  
   );
 }
 

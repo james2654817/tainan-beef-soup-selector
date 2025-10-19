@@ -33,9 +33,10 @@ export const stores = mysqlTable("stores", {
   lng: varchar("lng", { length: 32 }), // 經度
   photoUrl: text("photoUrl"), // 店家照片 URL
   googleMapsUrl: text("googleMapsUrl"), // Google Maps 連結
-  openingHours: json("openingHours").$type<string[]>(), // 營業時間陣列
+  openingHours: json("openingHours").$type<Array<{open: string, close: string}> | null>(), // 營業時間陣列
   priceLevel: int("priceLevel"), // 價格等級 1-4
   website: text("website"),
+  businessStatus: varchar("businessStatus", { length: 64 }).default("OPERATIONAL"), // 營業狀態: OPERATIONAL, CLOSED_TEMPORARILY, CLOSED_PERMANENTLY
   isActive: boolean("isActive").default(true), // 是否啟用
   lastUpdated: timestamp("lastUpdated").defaultNow(),
   createdAt: timestamp("createdAt").defaultNow(),
