@@ -1,1 +1,0 @@
-ALTER TABLE `stores` ADD `businessStatus` varchar(64) DEFAULT 'OPERATIONAL';

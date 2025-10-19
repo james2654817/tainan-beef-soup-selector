@@ -1,33 +1,12 @@
 {
   "version": "7",
-  "dialect": "mysql",
+  "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
-      "version": "5",
-      "when": 1760710211611,
-      "tag": "0000_violet_namor",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1760710263108,
-      "tag": "0001_even_grey_gargoyle",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1760711124852,
-      "tag": "0002_shocking_edwin_jarvis",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1760730510296,
-      "tag": "0003_marvelous_supreme_intelligence",
+      "version": "7",
+      "when": 1760903497326,
+      "tag": "0000_gorgeous_the_watchers",
       "breakpoints": true
     }
   ]

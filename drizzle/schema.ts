@@ -1,16 +1,21 @@
-import { mysqlEnum, mysqlTable, text, timestamp, varchar, int, boolean, json } from "drizzle-orm/mysql-core";
+import { pgEnum, pgTable, text, timestamp, varchar, integer, boolean, json } from "drizzle-orm/pg-core";
+
+/**
+ * PostgreSQL enum for user roles
+ */
+export const userRoleEnum = pgEnum("user_role", ["user", "admin"]);
 
 /**
  * Core user table backing auth flow.
  * Extend this file with additional tables as your product grows.
  * Columns use camelCase to match both database fields and generated types.
  */
-export const users = mysqlTable("users", {
+export const users = pgTable("users", {
   id: varchar("id", { length: 64 }).primaryKey(),
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
-  role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
+  role: userRoleEnum("role").default("user").notNull(),
   createdAt: timestamp("createdAt").defaultNow(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow(),
 });
@@ -21,20 +26,20 @@ export type InsertUser = typeof users.$inferInsert;
 /**
  * 台南牛肉湯店家資料表
  */
-export const stores = mysqlTable("stores", {
+export const stores = pgTable("stores", {
   id: varchar("id", { length: 128 }).primaryKey(), // Google Place ID
   name: varchar("name", { length: 255 }).notNull(),
   address: text("address").notNull(),
   district: varchar("district", { length: 64 }), // 行政區
   phone: varchar("phone", { length: 64 }),
-  rating: int("rating"), // 儲存為整數 (例如 4.5 -> 45)
-  reviewCount: int("reviewCount").default(0),
+  rating: integer("rating"), // 儲存為整數 (例如 4.5 -> 45)
+  reviewCount: integer("reviewCount").default(0),
   lat: varchar("lat", { length: 32 }), // 緯度
   lng: varchar("lng", { length: 32 }), // 經度
   photoUrl: text("photoUrl"), // 店家照片 URL
   googleMapsUrl: text("googleMapsUrl"), // Google Maps 連結
   openingHours: json("openingHours").$type<Array<{open: string, close: string}> | null>(), // 營業時間陣列
-  priceLevel: int("priceLevel"), // 價格等級 1-4
+  priceLevel: integer("priceLevel"), // 價格等級 1-4
   website: text("website"),
   businessStatus: varchar("businessStatus", { length: 64 }).default("OPERATIONAL"), // 營業狀態: OPERATIONAL, CLOSED_TEMPORARILY, CLOSED_PERMANENTLY
   isActive: boolean("isActive").default(true), // 是否啟用
@@ -48,11 +53,11 @@ export type InsertStore = typeof stores.$inferInsert;
 /**
  * 店家評論資料表
  */
-export const reviews = mysqlTable("reviews", {
-  id: int("id").primaryKey().autoincrement(),
+export const reviews = pgTable("reviews", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   storeId: varchar("storeId", { length: 128 }).notNull(),
   authorName: varchar("authorName", { length: 255 }),
-  rating: int("rating"), // 1-5 星
+  rating: integer("rating"), // 1-5 星
   text: text("text"),
   time: timestamp("time"),
   relativeTime: varchar("relativeTime", { length: 64 }), // 例如 "2天前"
@@ -65,12 +70,12 @@ export type InsertReview = typeof reviews.$inferInsert;
 /**
  * 店家照片資料表
  */
-export const storePhotos = mysqlTable("storePhotos", {
-  id: int("id").primaryKey().autoincrement(),
+export const storePhotos = pgTable("storePhotos", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   storeId: varchar("storeId", { length: 128 }).notNull(),
   photoUrl: text("photoUrl").notNull(),
-  width: int("width"),
-  height: int("height"),
+  width: integer("width"),
+  height: integer("height"),
   createdAt: timestamp("createdAt").defaultNow(),
 });
 
@@ -80,8 +85,8 @@ export type InsertStorePhoto = typeof storePhotos.$inferInsert;
 /**
  * 店家菜單資料表
  */
-export const menuItems = mysqlTable("menuItems", {
-  id: int("id").primaryKey().autoincrement(),
+export const menuItems = pgTable("menuItems", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   storeId: varchar("storeId", { length: 128 }).notNull(),
   name: varchar("name", { length: 255 }).notNull(), // 菜色名稱
   price: varchar("price", { length: 64 }), // 價格（可能是範圍，如 "$80-120"）
@@ -92,3 +97,4 @@ export const menuItems = mysqlTable("menuItems", {
 
 export type MenuItem = typeof menuItems.$inferSelect;
 export type InsertMenuItem = typeof menuItems.$inferInsert;
+
