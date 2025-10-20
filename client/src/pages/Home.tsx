@@ -385,6 +385,7 @@ export default function Home() {
                     setSelectedMenuStoreId(store.id);
                     setShowMenuDialog(true);
                   }}
+                  allPhotosData={allPhotosData}
                 />
               ))
             )}
@@ -671,7 +672,7 @@ function FilterContent({
 }
 
 // 店家卡片組件
-function StoreCard({ store, isSelected, onClick, onMenuClick }: { store: any, isSelected: boolean, onClick: () => void, onMenuClick: () => void }) {
+function StoreCard({ store, isSelected, onClick, onMenuClick, allPhotosData }: { store: any, isSelected: boolean, onClick: () => void, onMenuClick: () => void, allPhotosData?: any[] }) {
   const { data: reviews } = trpc.reviews.byStoreId.useQuery(
     { storeId: store.id, limit: 3 },
     { enabled: isSelected }
