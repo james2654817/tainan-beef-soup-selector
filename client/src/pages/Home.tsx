@@ -29,6 +29,9 @@ export default function Home() {
   // 從後端取得所有店家資料
   const { data: storesData, isLoading } = trpc.stores.list.useQuery();
 
+  // 取得所有店家的照片資料 (用於顯示店家卡片圖片)
+  const { data: allPhotosData } = trpc.photos.allStores.useQuery();
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("全部區域");
   const [minRating, setMinRating] = useState([0]);
@@ -679,20 +682,34 @@ function StoreCard({ store, isSelected, onClick, onMenuClick }: { store: any, is
         <div className="flex flex-col sm:flex-row">
           {/* 店家圖片 */}
           <div className="sm:w-1/3 h-48 sm:h-auto bg-muted relative overflow-hidden">
-            {store.photoUrl ? (
-              <img
-                src={store.photoUrl}
-                alt={store.name}
-                className="w-full h-full object-cover transition-transform hover:scale-110"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&h=300&fit=crop";
-                }}
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
-                <span className="text-4xl">🍜</span>
-              </div>
-            )}
+            {(() => {
+              // 從 allPhotosData 中找到這家店的第一張照片
+              const storePhotos = allPhotosData?.filter((p: any) => p.storeId === store.id) || [];
+              const firstPhoto = storePhotos[0];
+              const photoReference = firstPhoto?.photoUrl; // 實際上是 photo_reference
+              
+              // 如果有 photo_reference,使用 Google Maps API 生成照片 URL
+              const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+              const photoUrl = photoReference && googleMapsApiKey
+                ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${photoReference}&key=${googleMapsApiKey}`
+                : null;
+              
+              return photoUrl ? (
+                <img
+                  src={photoUrl}
+                  alt={store.name}
+                  className="w-full h-full object-cover transition-transform hover:scale-110"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = 'none';
+                    (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50"><span class="text-4xl">🍜</span></div>';
+                  }}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
+                  <span className="text-4xl">🍜</span>
+                </div>
+              );
+            })()}
           </div>
 
           {/* 店家資訊 */}

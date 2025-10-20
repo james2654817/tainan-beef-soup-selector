@@ -162,6 +162,24 @@ export async function getReviewsByStoreId(storeId: string, limit: number = 10) {
 
 // 照片相關查詢
 
+export async function getAllStoresFirstPhoto() {
+  const db = await getDb();
+  if (!db) return [];
+
+  // 使用 SQL 查詢取得每家店的第一張照片
+  const result = await db.execute(sql`
+    SELECT DISTINCT ON ("storeId") 
+      "storeId", 
+      "photoUrl",
+      width,
+      height
+    FROM "storePhotos"
+    ORDER BY "storeId", id
+  `);
+  
+  return result.rows;
+}
+
 export async function getPhotosByStoreId(storeId: string, limit: number = 5) {
   const db = await getDb();
   if (!db) return [];

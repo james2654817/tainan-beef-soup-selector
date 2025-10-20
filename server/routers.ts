@@ -88,6 +88,11 @@ export const appRouter = router({
 
   // 照片 API
   photos: router({
+    // 取得所有店家的第一張照片 (用於店家列表顯示)
+    allStores: publicProcedure.query(async () => {
+      return await db.getAllStoresFirstPhoto();
+    }),
+    
     // 取得店家照片
     byStoreId: publicProcedure
       .input(z.object({ storeId: z.string(), limit: z.number().optional() }))
