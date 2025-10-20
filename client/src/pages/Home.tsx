@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -28,17 +28,6 @@ export default function Home() {
 
   // 從後端取得所有店家資料
   const { data: storesData, isLoading } = trpc.stores.list.useQuery();
-  
-  // DEBUG: 檢查 API 回應
-  useEffect(() => {
-    if (storesData && storesData.length > 0) {
-      console.log('=== 店家資料檢查 ===');
-      console.log('總店家數:', storesData.length);
-      console.log('第一家店家:', storesData[0]);
-      console.log('photoReference:', storesData[0].photoReference);
-      console.log('VITE_GOOGLE_MAPS_API_KEY:', import.meta.env.VITE_GOOGLE_MAPS_API_KEY ? '已設定' : '未設定');
-    }
-  }, [storesData]);
 
 
 
