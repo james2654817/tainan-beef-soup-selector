@@ -24,9 +24,12 @@ export const appRouter = router({
     // 取得所有店家
     list: publicProcedure.query(async () => {
       const stores = await db.getAllStores();
+      const photosMap = await db.getAllStoresFirstPhotoMap();
+      
       return stores.map(store => ({
         ...store,
         rating: store.rating ? store.rating / 10 : null, // 45 -> 4.5
+        photoReference: photosMap[store.id] || null, // 加入第一張照片的 reference
       }));
     }),
 

@@ -29,17 +29,7 @@ export default function Home() {
   // 從後端取得所有店家資料
   const { data: storesData, isLoading } = trpc.stores.list.useQuery();
 
-  // 取得所有店家的照片資料 (用於顯示店家卡片圖片)
-  const { data: allPhotosData } = trpc.photos.allStores.useQuery();
-  
-  // 除錯: 檢查照片資料
-  useEffect(() => {
-    if (allPhotosData) {
-      console.log('[DEBUG] allPhotosData 載入成功:', allPhotosData.length, '筆資料');
-      console.log('[DEBUG] 第一筆照片:', allPhotosData[0]);
-    }
-    console.log('[DEBUG] GOOGLE_MAPS_API_KEY:', import.meta.env.VITE_GOOGLE_MAPS_API_KEY ? '已設定' : '未設定');
-  }, [allPhotosData]);
+
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("全部區域");
@@ -385,7 +375,6 @@ export default function Home() {
                     setSelectedMenuStoreId(store.id);
                     setShowMenuDialog(true);
                   }}
-                  allPhotosData={allPhotosData}
                 />
               ))
             )}
@@ -672,7 +661,7 @@ function FilterContent({
 }
 
 // 店家卡片組件
-function StoreCard({ store, isSelected, onClick, onMenuClick, allPhotosData }: { store: any, isSelected: boolean, onClick: () => void, onMenuClick: () => void, allPhotosData?: any[] }) {
+function StoreCard({ store, isSelected, onClick, onMenuClick }: { store: any, isSelected: boolean, onClick: () => void, onMenuClick: () => void }) {
   const { data: reviews } = trpc.reviews.byStoreId.useQuery(
     { storeId: store.id, limit: 3 },
     { enabled: isSelected }
@@ -693,25 +682,9 @@ function StoreCard({ store, isSelected, onClick, onMenuClick, allPhotosData }: {
           {/* 店家圖片 */}
           <div className="sm:w-1/3 h-48 sm:h-auto bg-muted relative overflow-hidden">
             {(() => {
-              // 從 allPhotosData 中找到這家店的第一張照片
-              const storePhotos = allPhotosData?.filter((p: any) => p.storeId === store.id) || [];
-              const firstPhoto = storePhotos[0];
-              const photoReference = firstPhoto?.photoUrl; // 實際上是 photo_reference
-              
-              // 除錯
-              if (store.id === 'ChIJDXFiuxp2bjQRSldJ3YTNG8M') {
-                console.log('[DEBUG] 文章牛肉湯照片:', {
-                  storePhotos: storePhotos.length,
-                  firstPhoto,
-                  photoReference,
-                  hasApiKey: !!import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-                });
-              }
-              
-              // 如果有 photo_reference,使用 Google Maps API 生成照片 URL
               const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-              const photoUrl = photoReference && googleMapsApiKey
-                ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${photoReference}&key=${googleMapsApiKey}`
+              const photoUrl = store.photoReference && googleMapsApiKey
+                ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${store.photoReference}&key=${googleMapsApiKey}`
                 : null;
               
               return photoUrl ? (
@@ -720,8 +693,11 @@ function StoreCard({ store, isSelected, onClick, onMenuClick, allPhotosData }: {
                   alt={store.name}
                   className="w-full h-full object-cover transition-transform hover:scale-110"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none';
-                    (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50"><span class="text-4xl">🍜</span></div>';
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    if (target.parentElement) {
+                      target.parentElement.innerHTML = '<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50"><span class="text-4xl">🍜</span></div>';
+                    }
                   }}
                 />
               ) : (

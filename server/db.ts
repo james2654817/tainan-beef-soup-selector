@@ -180,6 +180,28 @@ export async function getAllStoresFirstPhoto() {
   return result.rows;
 }
 
+export async function getAllStoresFirstPhotoMap() {
+  const db = await getDb();
+  if (!db) return {};
+
+  // 取得每家店的第一張照片,轉換成 Map 格式
+  const result = await db.execute(sql`
+    SELECT DISTINCT ON ("storeId") 
+      "storeId", 
+      "photoUrl"
+    FROM "storePhotos"
+    ORDER BY "storeId", id
+  `);
+  
+  // 轉換成 { storeId: photoReference } 的格式
+  const photoMap: Record<string, string> = {};
+  result.rows.forEach((row: any) => {
+    photoMap[row.storeId] = row.photoUrl;
+  });
+  
+  return photoMap;
+}
+
 export async function getPhotosByStoreId(storeId: string, limit: number = 5) {
   const db = await getDb();
   if (!db) return [];
