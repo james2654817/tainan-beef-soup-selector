@@ -95,7 +95,29 @@ export async function getAllStores() {
   const db = await getDb();
   if (!db) return [];
 
-  const result = await db.select().from(stores).where(eq(stores.isActive, true));
+  // 明確指定要查詢的欄位,確保包含 firstPhotoReference
+  const result = await db.select({
+    id: stores.id,
+    name: stores.name,
+    address: stores.address,
+    district: stores.district,
+    phone: stores.phone,
+    rating: stores.rating,
+    reviewCount: stores.reviewCount,
+    lat: stores.lat,
+    lng: stores.lng,
+    photoUrl: stores.photoUrl,
+    firstPhotoReference: stores.firstPhotoReference,
+    googleMapsUrl: stores.googleMapsUrl,
+    openingHours: stores.openingHours,
+    priceLevel: stores.priceLevel,
+    website: stores.website,
+    businessStatus: stores.businessStatus,
+    isActive: stores.isActive,
+    lastUpdated: stores.lastUpdated,
+    createdAt: stores.createdAt,
+  }).from(stores).where(eq(stores.isActive, true));
+  
   return result;
 }
 
