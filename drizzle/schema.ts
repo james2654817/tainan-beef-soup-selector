@@ -37,6 +37,7 @@ export const stores = pgTable("stores", {
   lat: varchar("lat", { length: 32 }), // 緯度
   lng: varchar("lng", { length: 32 }), // 經度
   photoUrl: text("photoUrl"), // 店家照片 URL
+  firstPhotoReference: text("firstPhotoReference"), // 第一張照片的 Google Places photo reference
   googleMapsUrl: text("googleMapsUrl"), // Google Maps 連結
   openingHours: json("openingHours").$type<Array<{open: string, close: string}> | null>(), // 營業時間陣列
   priceLevel: integer("priceLevel"), // 價格等級 1-4

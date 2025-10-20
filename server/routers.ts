@@ -24,13 +24,11 @@ export const appRouter = router({
     // 取得所有店家
     list: publicProcedure.query(async () => {
       const stores = await db.getAllStores();
-      // TODO: 照片功能暫時移除,因為 DISTINCT ON 查詢太慢
-      // const photosMap = await db.getAllStoresFirstPhotoMap();
       
       return stores.map(store => ({
         ...store,
         rating: store.rating ? store.rating / 10 : null, // 45 -> 4.5
-        // photoReference: photosMap[store.id] || null,
+        photoReference: store.firstPhotoReference || null, // 從 stores 表直接讀取
       }));
     }),
 
