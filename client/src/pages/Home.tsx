@@ -30,7 +30,7 @@ export default function Home() {
   const { data: storesData, isLoading } = trpc.stores.list.useQuery();
   
   // DEBUG: 檢查 API 回應
-  React.useEffect(() => {
+  useEffect(() => {
     if (storesData && storesData.length > 0) {
       console.log('=== 店家資料檢查 ===');
       console.log('總店家數:', storesData.length);
