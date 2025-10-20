@@ -31,6 +31,15 @@ export default function Home() {
 
   // 取得所有店家的照片資料 (用於顯示店家卡片圖片)
   const { data: allPhotosData } = trpc.photos.allStores.useQuery();
+  
+  // 除錯: 檢查照片資料
+  useEffect(() => {
+    if (allPhotosData) {
+      console.log('[DEBUG] allPhotosData 載入成功:', allPhotosData.length, '筆資料');
+      console.log('[DEBUG] 第一筆照片:', allPhotosData[0]);
+    }
+    console.log('[DEBUG] GOOGLE_MAPS_API_KEY:', import.meta.env.VITE_GOOGLE_MAPS_API_KEY ? '已設定' : '未設定');
+  }, [allPhotosData]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("全部區域");
@@ -687,6 +696,16 @@ function StoreCard({ store, isSelected, onClick, onMenuClick }: { store: any, is
               const storePhotos = allPhotosData?.filter((p: any) => p.storeId === store.id) || [];
               const firstPhoto = storePhotos[0];
               const photoReference = firstPhoto?.photoUrl; // 實際上是 photo_reference
+              
+              // 除錯
+              if (store.id === 'ChIJDXFiuxp2bjQRSldJ3YTNG8M') {
+                console.log('[DEBUG] 文章牛肉湯照片:', {
+                  storePhotos: storePhotos.length,
+                  firstPhoto,
+                  photoReference,
+                  hasApiKey: !!import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+                });
+              }
               
               // 如果有 photo_reference,使用 Google Maps API 生成照片 URL
               const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
